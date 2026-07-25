@@ -1,0 +1,65 @@
+# CloudProbe — pre-commit configuration
+#
+# Local guardrail that catches format, lint, type, and hygiene issues before
+# CI does. Hooks are intentionally fast; anything slower than a couple of
+# seconds belongs in CI, not here (see docs/project-structure.md §5).
+
+default_language_version:
+  python: python3.11
+
+default_stages: [pre-commit]
+
+fail_fast: false
+
+repos:
+  # ---- Whitespace, EOL, and file hygiene ---------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '\.md$'   # Markdown line-break syntax uses trailing spaces
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: check-added-large-files
+        args: ["--maxkb=512"]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: detect-private-key
+
+  # ---- YAML linting ------------------------------------------------------
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: ["-s"]
+        files: '^(configs|docs|\.github|\.pre-commit-config\.yaml).*\.(ya?ml)$'
+
+  # ---- Ruff — linting only. Formatting is Black's job. ------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+
+  # ---- Black — formatter -------------------------------------------------
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+
+  # ---- Mypy — strict typing on the production package -------------------
+  # Runs against the installed venv, not pre-commit's isolated env, so it
+  # sees the same stubs the developer has locally.
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (strict)
+        entry: .venv/bin/mypy
+        language: system
+        types: [python]
+        pass_filenames: false
+        args: [--config-file=pyproject.toml]

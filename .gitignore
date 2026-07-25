@@ -1,12 +1,66 @@
+# ---- Virtual environments -----------------------------------------------
 .venv/
+venv/
+env/
+
+# ---- Python bytecode & caches -------------------------------------------
 __pycache__/
 *.pyc
-.env
-coverage/
+*.pyo
+*.pyd
+
+# ---- Test, lint, and type-check caches ----------------------------------
 .pytest_cache/
 .mypy_cache/
-ruff_cache/
+.ruff_cache/
+.tox/
+.hypothesis/
+
+# ---- Coverage output ----------------------------------------------------
+.coverage
+.coverage.*
+coverage.xml
+coverage_html/
+htmlcov/
+coverage/
+
+# ---- Build artefacts ----------------------------------------------------
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# ---- Environment & secrets ---------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+known_hosts
+
+# ---- AWS local state ---------------------------------------------------
+.aws/
+aws-credentials
+
+# ---- Runtime output — keep the directories, ignore their contents ------
 reports/*
 !reports/.gitkeep
 logs/*
 !logs/.gitkeep
+
+# ---- IDE & editor -------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ---- OS metadata --------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ---- Pre-commit local state --------------------------------------------
+.pre-commit-cache/
