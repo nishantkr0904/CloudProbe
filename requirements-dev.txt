@@ -1,0 +1,41 @@
+# CloudProbe — pinned development dependencies
+#
+# Everything a contributor needs beyond the runtime graph in requirements.txt.
+# This file must never be installed into the production container image — the
+# Dockerfile installs requirements.txt only.
+#
+# Install with:
+#     pip install -r requirements.txt -r requirements-dev.txt
+#
+# The `-r requirements.txt` line below chains the runtime graph so a single
+# command bootstraps the full dev environment.
+
+-r requirements.txt
+
+# ---- Test runner and plugins ---------------------------------------------
+pytest==8.3.3
+pytest-cov==5.0.0
+pytest-socket==0.7.0
+pytest-mock==3.14.0
+pytest-xdist==3.6.1
+coverage[toml]==7.6.1
+
+# ---- AWS test doubles ----------------------------------------------------
+# Service subset matches the AWS surface CloudProbe actually calls
+# (see docs/architecture.md §3.2).
+moto[ec2,cloudwatch,sns,s3]==5.0.16
+
+# ---- Linting, formatting, typing -----------------------------------------
+ruff==0.6.9
+black==24.10.0
+mypy==1.11.2
+yamllint==1.35.1
+
+# ---- Pre-commit orchestration --------------------------------------------
+pre-commit==3.8.0
+
+# ---- Type stubs ----------------------------------------------------------
+types-PyYAML==6.0.12.20240917
+types-paramiko==3.5.0.20240928
+types-requests==2.32.0.20240914
+boto3-stubs[ec2,cloudwatch,sns,s3]==1.35.36
