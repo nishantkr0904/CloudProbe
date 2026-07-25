@@ -1,0 +1,239 @@
+##############################################################################
+# CloudProbe — PEP 621 project metadata and tool configuration
+#
+# This file is the canonical declaration of what CloudProbe is, which Python
+# it targets, and how its development tools are configured. It does NOT pin
+# dependency versions — that is the job of requirements.txt (runtime) and
+# requirements-dev.txt (development). See docs/project-structure.md §5.
+##############################################################################
+
+[build-system]
+# setuptools is the simplest PEP 517 backend that ships with pip. No Poetry,
+# no Hatch, no Pipenv — matches the tooling constraint in ROADMAP.md.
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# ---------------------------------------------------------------------------
+# PEP 621 project metadata
+# ---------------------------------------------------------------------------
+[project]
+name = "cloudprobe"
+version = "0.0.1"
+description = "Hybrid cloud network observability and QA pipeline for AWS."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11,<3.13"
+keywords = [
+    "aws",
+    "networking",
+    "observability",
+    "monitoring",
+    "boto3",
+    "paramiko",
+    "cloudwatch",
+    "infrastructure",
+]
+authors = [
+    { name = "CloudProbe Maintainers" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Networking :: Monitoring",
+    "Topic :: System :: Systems Administration",
+    "Typing :: Typed",
+]
+
+# Console entry point. Populated in ROADMAP Phase 1 when the CLI stub lands.
+[project.scripts]
+cloudprobe = "cloudprobe.cli:main"
+
+[project.urls]
+Homepage      = "https://github.com/"
+Documentation = "https://github.com/"
+Issues        = "https://github.com/"
+
+# ---------------------------------------------------------------------------
+# setuptools — src/ layout
+# ---------------------------------------------------------------------------
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where   = ["src"]
+include = ["cloudprobe*"]
+
+[tool.setuptools.package-data]
+cloudprobe = ["py.typed"]
+
+# ---------------------------------------------------------------------------
+# Ruff — linting only. Black owns formatting; the ruff formatter is NOT used.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length    = 100
+target-version = "py311"
+src            = ["src", "tests"]
+extend-exclude = [
+    ".venv",
+    "build",
+    "dist",
+    "logs",
+    "reports",
+    "assets",
+    "examples",
+]
+
+[tool.ruff.lint]
+# A focused rule set for infrastructure code. Additions are cheap; removals
+# after they've caught a real bug are not.
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+    "N",    # pep8-naming
+    "C4",   # flake8-comprehensions
+    "RUF",  # ruff-specific
+    "S",    # flake8-bandit (security)
+    "T20",  # flake8-print (no stray prints in library code)
+    "PT",   # flake8-pytest-style
+    "RET",  # flake8-return
+    "TID",  # flake8-tidy-imports
+    "PL",   # pylint subset
+]
+ignore = [
+    "PLR0913",  # too many arguments — infra code legitimately has many
+    "S101",    # asserts are fine in tests
+    "PLR2004", # magic values — noisy in tests
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "T20", "PLR", "PT011"]
+"scripts/**" = ["T20"]  # scripts are allowed to print
+
+[tool.ruff.lint.isort]
+known-first-party = ["cloudprobe"]
+
+# Ruff's formatter is intentionally disabled — Black is the formatter.
+# This section is left minimal to make the split explicit.
+[tool.ruff.format]
+docstring-code-format = false
+
+# ---------------------------------------------------------------------------
+# Black — formatting
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length    = 100
+target-version = ["py311", "py312"]
+include        = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.venv
+  | build
+  | dist
+  | logs
+  | reports
+  | assets
+)/
+'''
+
+# ---------------------------------------------------------------------------
+# Mypy — strict typing on the production package, lenient on tests
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+files          = ["src", "tests"]
+strict         = true
+warn_unused_configs   = true
+warn_unreachable      = true
+warn_redundant_casts  = true
+warn_return_any       = true
+disallow_untyped_defs = true
+show_error_codes      = true
+pretty                = true
+namespace_packages    = true
+explicit_package_bases = true
+
+# Third-party libraries without complete stubs — accept partial typing.
+[[tool.mypy.overrides]]
+module = [
+    "apscheduler.*",
+    "paramiko.*",  # types-paramiko covers most, some submodules do not
+    "moto.*",
+]
+ignore_missing_imports = true
+
+# Tests are exempt from a handful of strict rules to keep fixtures readable.
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+warn_return_any       = false
+
+# ---------------------------------------------------------------------------
+# Pytest — four-tier test taxonomy (see docs/architecture.md §10)
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths  = ["tests"]
+addopts    = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--tb=short",
+    "--showlocals",
+]
+markers = [
+    "unit: fast, pure-logic tests with no I/O",
+    "integration: adapter tests against fakes (moto, pytest-socket, MockTransport)",
+    "regression: golden-file comparisons on user-visible surfaces",
+    "failure_scenarios: parameterized simulations of hybrid-cloud failure modes",
+    "slow: opt-in longer-running tests",
+]
+# pytest-socket safeguard: unit tests never open real sockets. Individual
+# integration/regression tests may re-enable per-fixture.
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning:apscheduler.*",
+    "ignore::DeprecationWarning:botocore.*",
+]
+
+# ---------------------------------------------------------------------------
+# Coverage — 90% floor enforced locally and in CI (ROADMAP Phase 7)
+# ---------------------------------------------------------------------------
+[tool.coverage.run]
+source       = ["src/cloudprobe"]
+branch       = true
+parallel     = true
+data_file    = ".coverage"
+omit = [
+    "*/__main__.py",
+    "*/tests/*",
+]
+
+[tool.coverage.report]
+fail_under          = 90
+show_missing        = true
+skip_covered        = false
+precision           = 1
+exclude_also = [
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    "pragma: no cover",
+    "\\.\\.\\.",
+]
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.coverage.html]
+directory = "coverage_html"
