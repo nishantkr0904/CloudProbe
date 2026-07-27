@@ -64,3 +64,5 @@ Desktop.ini
 
 # ---- Pre-commit local state --------------------------------------------
 .pre-commit-cache/
+
+*.py[cod]
