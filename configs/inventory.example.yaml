@@ -1,0 +1,448 @@
+---
+# CloudProbe — example inventory (Phase 2)
+#
+# 50+ synthetic targets distributed across three VPCs and two AZs.  Every
+# probe type used here (tcp, icmp, udp, http, ssh) has a matching entry in
+# thresholds.yaml and schedules.yaml.  Load this file with:
+#
+#     python -m cloudprobe config validate configs/inventory.example.yaml
+
+targets:
+  # ---- VPC A — web tier -------------------------------------------------
+  - target_id: vpca-web-01
+    label: Web frontend A-01
+    host: 10.20.1.10
+    port: 443
+    probe_types: [tcp, http, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa01
+    instance_id: i-0aaa010001
+    tags: {tier: web, env: lab}
+
+  - target_id: vpca-web-02
+    label: Web frontend A-02
+    host: 10.20.1.11
+    port: 443
+    probe_types: [tcp, http, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa01
+    instance_id: i-0aaa010002
+    tags: {tier: web, env: lab}
+
+  - target_id: vpca-web-03
+    host: 10.20.1.12
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa01
+    tags: {tier: web, env: lab}
+
+  - target_id: vpca-web-04
+    host: 10.20.1.13
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa01
+    tags: {tier: web, env: lab}
+
+  - target_id: vpca-web-05
+    host: 10.20.1.14
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa01
+    tags: {tier: web, env: lab}
+
+  - target_id: vpca-web-06
+    host: 10.20.1.15
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa02
+    tags: {tier: web, env: lab}
+
+  - target_id: vpca-web-07
+    host: 10.20.1.16
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa02
+    tags: {tier: web, env: lab}
+
+  - target_id: vpca-web-08
+    host: 10.20.1.17
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa02
+    tags: {tier: web, env: lab}
+
+  # ---- VPC A — application tier ----------------------------------------
+  - target_id: vpca-app-01
+    label: App server A-01
+    host: 10.20.2.10
+    port: 8080
+    probe_types: [tcp, ssh, icmp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa03
+    instance_id: i-0aaa020001
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-02
+    host: 10.20.2.11
+    port: 8080
+    probe_types: [tcp, ssh, icmp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa03
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-03
+    host: 10.20.2.12
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa03
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-04
+    host: 10.20.2.13
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa03
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-05
+    host: 10.20.2.14
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa04
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-06
+    host: 10.20.2.15
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa04
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-07
+    host: 10.20.2.16
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa04
+    tags: {tier: app, env: lab}
+
+  # ---- VPC A — data tier -----------------------------------------------
+  - target_id: vpca-db-01
+    label: Primary database
+    host: 10.20.3.10
+    port: 5432
+    probe_types: [tcp, icmp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa05
+    tags: {tier: db, env: lab}
+
+  - target_id: vpca-db-02
+    label: Replica database
+    host: 10.20.3.11
+    port: 5432
+    probe_types: [tcp, icmp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa05
+    tags: {tier: db, env: lab}
+
+  - target_id: vpca-cache-01
+    host: 10.20.3.20
+    port: 6379
+    probe_types: [tcp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa05
+    tags: {tier: cache, env: lab}
+
+  - target_id: vpca-cache-02
+    host: 10.20.3.21
+    port: 6379
+    probe_types: [tcp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa05
+    tags: {tier: cache, env: lab}
+
+  # ---- VPC B — mirror stack --------------------------------------------
+  - target_id: vpcb-web-01
+    host: 10.21.1.10
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb01
+    tags: {tier: web, env: lab, region: dr}
+
+  - target_id: vpcb-web-02
+    host: 10.21.1.11
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb01
+    tags: {tier: web, env: lab, region: dr}
+
+  - target_id: vpcb-web-03
+    host: 10.21.1.12
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb01
+    tags: {tier: web, env: lab, region: dr}
+
+  - target_id: vpcb-web-04
+    host: 10.21.1.13
+    port: 443
+    probe_types: [tcp, http]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb02
+    tags: {tier: web, env: lab, region: dr}
+
+  - target_id: vpcb-app-01
+    host: 10.21.2.10
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb03
+    tags: {tier: app, env: lab, region: dr}
+
+  - target_id: vpcb-app-02
+    host: 10.21.2.11
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb03
+    tags: {tier: app, env: lab, region: dr}
+
+  - target_id: vpcb-app-03
+    host: 10.21.2.12
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb03
+    tags: {tier: app, env: lab, region: dr}
+
+  - target_id: vpcb-app-04
+    host: 10.21.2.13
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb04
+    tags: {tier: app, env: lab, region: dr}
+
+  - target_id: vpcb-db-01
+    host: 10.21.3.10
+    port: 5432
+    probe_types: [tcp, icmp]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb05
+    tags: {tier: db, env: lab, region: dr}
+
+  - target_id: vpcb-db-02
+    host: 10.21.3.11
+    port: 5432
+    probe_types: [tcp, icmp]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb05
+    tags: {tier: db, env: lab, region: dr}
+
+  # ---- VPC C — shared services ----------------------------------------
+  - target_id: vpcc-dns-01
+    label: Internal DNS resolver A
+    host: 10.22.0.53
+    port: 53
+    probe_types: [udp, tcp]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc01
+    tags: {tier: dns, env: lab}
+
+  - target_id: vpcc-dns-02
+    label: Internal DNS resolver B
+    host: 10.22.0.54
+    port: 53
+    probe_types: [udp, tcp]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc01
+    tags: {tier: dns, env: lab}
+
+  - target_id: vpcc-ntp-01
+    label: Internal NTP server
+    host: 10.22.0.123
+    port: 123
+    probe_types: [udp]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc01
+    tags: {tier: ntp, env: lab}
+
+  - target_id: vpcc-bastion-01
+    label: Bastion host
+    host: 10.22.0.22
+    port: 22
+    probe_types: [tcp, ssh, icmp]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc02
+    instance_id: i-0ccc000001
+    tags: {tier: bastion, env: lab}
+
+  - target_id: vpcc-bastion-02
+    host: 10.22.0.23
+    port: 22
+    probe_types: [tcp, ssh, icmp]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc02
+    tags: {tier: bastion, env: lab}
+
+  - target_id: vpcc-log-01
+    label: Log aggregator
+    host: 10.22.1.10
+    port: 9200
+    probe_types: [tcp, http]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc03
+    tags: {tier: logging, env: lab}
+
+  - target_id: vpcc-log-02
+    host: 10.22.1.11
+    port: 9200
+    probe_types: [tcp, http]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc03
+    tags: {tier: logging, env: lab}
+
+  - target_id: vpcc-metrics-01
+    host: 10.22.1.20
+    port: 9090
+    probe_types: [tcp, http]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc03
+    tags: {tier: metrics, env: lab}
+
+  # ---- Cross-VPC gateways ---------------------------------------------
+  - target_id: gw-vpca-vpcb
+    label: VPC-A ↔ VPC-B transit gateway attachment
+    host: 10.20.0.1
+    probe_types: [icmp]
+    vpc_id: vpc-0aaa0000
+    tags: {tier: gateway, env: lab}
+
+  - target_id: gw-vpca-vpcc
+    label: VPC-A ↔ VPC-C transit gateway attachment
+    host: 10.20.0.2
+    probe_types: [icmp]
+    vpc_id: vpc-0aaa0000
+    tags: {tier: gateway, env: lab}
+
+  - target_id: gw-vpcb-vpcc
+    label: VPC-B ↔ VPC-C transit gateway attachment
+    host: 10.21.0.1
+    probe_types: [icmp]
+    vpc_id: vpc-0bbb0000
+    tags: {tier: gateway, env: lab}
+
+  # ---- External / hybrid targets --------------------------------------
+  - target_id: ext-corp-vpn
+    label: Corporate VPN concentrator
+    host: vpn.example.internal
+    port: 500
+    probe_types: [udp, icmp]
+    tags: {tier: hybrid, env: lab}
+
+  - target_id: ext-saas-api
+    label: SaaS partner API
+    host: api.partner.example.com
+    port: 443
+    probe_types: [tcp, http]
+    tags: {tier: hybrid, env: lab}
+
+  - target_id: ext-payment
+    label: Payments gateway
+    host: payments.example.com
+    port: 443
+    probe_types: [tcp, http]
+    tags: {tier: hybrid, env: lab}
+
+  - target_id: ext-auth
+    label: External identity provider
+    host: idp.example.com
+    port: 443
+    probe_types: [tcp, http]
+    tags: {tier: hybrid, env: lab}
+
+  # ---- Additional VPC A app hosts to reach 50+ ------------------------
+  - target_id: vpca-app-08
+    host: 10.20.2.17
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa04
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-09
+    host: 10.20.2.18
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa04
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-app-10
+    host: 10.20.2.19
+    port: 8080
+    probe_types: [tcp, ssh]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa04
+    tags: {tier: app, env: lab}
+
+  - target_id: vpca-worker-01
+    host: 10.20.4.10
+    port: 8080
+    probe_types: [tcp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa06
+    tags: {tier: worker, env: lab}
+
+  - target_id: vpca-worker-02
+    host: 10.20.4.11
+    port: 8080
+    probe_types: [tcp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa06
+    tags: {tier: worker, env: lab}
+
+  - target_id: vpca-worker-03
+    host: 10.20.4.12
+    port: 8080
+    probe_types: [tcp]
+    vpc_id: vpc-0aaa0000
+    subnet_id: subnet-0aaa06
+    tags: {tier: worker, env: lab}
+
+  - target_id: vpcb-worker-01
+    host: 10.21.4.10
+    port: 8080
+    probe_types: [tcp]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb06
+    tags: {tier: worker, env: lab, region: dr}
+
+  - target_id: vpcb-worker-02
+    host: 10.21.4.11
+    port: 8080
+    probe_types: [tcp]
+    vpc_id: vpc-0bbb0000
+    subnet_id: subnet-0bbb06
+    tags: {tier: worker, env: lab, region: dr}
+
+  - target_id: vpcc-monitor-01
+    host: 10.22.1.30
+    port: 3000
+    probe_types: [tcp, http]
+    vpc_id: vpc-0ccc0000
+    subnet_id: subnet-0ccc03
+    tags: {tier: monitoring, env: lab}

@@ -1,0 +1,33 @@
+---
+# CloudProbe — thresholds
+#
+# Acceptable performance bounds for each probe type.  A result that exceeds
+# any of these is a candidate breach; the alerting layer decides what to do
+# about it.  Every probe type referenced by any target in inventory.yaml
+# must have exactly one entry here.
+
+thresholds:
+  - probe_type: tcp
+    max_latency_ms: 500
+    min_success_ratio: 0.99
+    consecutive_failures: 3
+
+  - probe_type: http
+    max_latency_ms: 1500
+    min_success_ratio: 0.98
+    consecutive_failures: 3
+
+  - probe_type: ssh
+    max_latency_ms: 2000
+    min_success_ratio: 0.95
+    consecutive_failures: 2
+
+  - probe_type: icmp
+    max_latency_ms: 300
+    min_success_ratio: 0.90
+    consecutive_failures: 5
+
+  - probe_type: udp
+    max_latency_ms: 400
+    min_success_ratio: 0.95
+    consecutive_failures: 3

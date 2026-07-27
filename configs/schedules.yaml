@@ -1,0 +1,34 @@
+---
+# CloudProbe — schedules
+#
+# Cron-style cadence per probe type.  Cadence tuned for the "sub-minute
+# anomaly detection" requirement in docs/architecture.md §1.3: fast probes
+# (tcp, http) run every 30 seconds; heavier probes (ssh) less often.
+#
+# Cron fields: minute hour day-of-month month day-of-week
+
+schedules:
+  - probe_type: tcp
+    cron_expression: "*/1 * * * *"      # every minute (APScheduler will
+    timeout_seconds: 5                   # sub-divide via second_step in Phase 5)
+    max_concurrency: 20
+
+  - probe_type: http
+    cron_expression: "*/1 * * * *"
+    timeout_seconds: 10
+    max_concurrency: 10
+
+  - probe_type: ssh
+    cron_expression: "*/5 * * * *"       # every 5 minutes
+    timeout_seconds: 15
+    max_concurrency: 5
+
+  - probe_type: icmp
+    cron_expression: "*/1 * * * *"
+    timeout_seconds: 5
+    max_concurrency: 15
+
+  - probe_type: udp
+    cron_expression: "*/2 * * * *"       # every 2 minutes
+    timeout_seconds: 5
+    max_concurrency: 10
