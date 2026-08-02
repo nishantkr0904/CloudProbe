@@ -10,6 +10,8 @@ internal submodules directly.  The layer owns:
   set with static definitions taking precedence over discovered ones.
 * EC2-backed discovery, which turns ``DescribeInstances`` responses into
   targets using a caller-supplied client.
+* VPC inventory collection, which gathers the network topology (VPCs, subnets,
+  route tables) that gives a target's AWS identifiers their meaning.
 
 Discovery consumes and emits ``Target`` records owned by ``config/`` — it does
 not define a target shape of its own.
@@ -26,6 +28,14 @@ from cloudprobe.discovery.models import (
     TargetCollision,
     TargetKey,
 )
+from cloudprobe.discovery.vpc import (
+    NetworkTopology,
+    Route,
+    RouteTableMetadata,
+    SubnetMetadata,
+    VpcMetadata,
+    collect_network_topology,
+)
 
 __all__ = [
     "DiscoveryResult",
@@ -33,9 +43,15 @@ __all__ = [
     "Inventory",
     "InventoryEntry",
     "InventorySource",
+    "NetworkTopology",
+    "Route",
+    "RouteTableMetadata",
     "SourceFailure",
+    "SubnetMetadata",
     "TargetCollision",
     "TargetKey",
+    "VpcMetadata",
     "build_inventory",
+    "collect_network_topology",
     "discover_ec2_targets",
 ]
