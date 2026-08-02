@@ -10,9 +10,11 @@ metric emission and no report formatting.
 """
 
 from cloudprobe.probes.base import ProbeErrorClass, ProbeResult
+from cloudprobe.probes.icmp import IcmpProbe
 from cloudprobe.probes.tcp import TcpProbe
 
 __all__ = [
+    "IcmpProbe",
     "ProbeErrorClass",
     "ProbeResult",
     "TcpProbe",

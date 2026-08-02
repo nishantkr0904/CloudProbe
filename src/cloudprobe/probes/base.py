@@ -32,8 +32,12 @@ class ProbeErrorClass(str, Enum):
 
     TIMEOUT = "timeout"
     REFUSED = "refused"
+    UNREACHABLE = "unreachable"
     DNS_FAILURE = "dns_failure"
     SOCKET_ERROR = "socket_error"
+    # A probe's transport could not be executed at all — distinct from any
+    # observation made over the wire.
+    COMMAND_ERROR = "command_error"
 
 
 @dataclass(frozen=True)
