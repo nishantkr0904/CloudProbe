@@ -35,6 +35,9 @@ class ProbeErrorClass(str, Enum):
     UNREACHABLE = "unreachable"
     DNS_FAILURE = "dns_failure"
     SOCKET_ERROR = "socket_error"
+    # A reply arrived but did not satisfy the probe's expectation — reachable
+    # host, wrong or broken service.
+    PROTOCOL_ERROR = "protocol_error"
     # A probe's transport could not be executed at all — distinct from any
     # observation made over the wire.
     COMMAND_ERROR = "command_error"
