@@ -1,0 +1,58 @@
+# Build context exclusions (project-structure §"`.dockerignore` and `.gitignore`").
+#
+# The image is a packaging of src/ + requirements.txt and nothing else.  Keeping
+# the context tight makes builds faster, layers smaller, and guarantees that
+# tests, docs and local credentials can never be baked into an image.
+
+# Version control
+.git
+.gitignore
+.github
+
+# Tests and QA artifacts — never shipped in the runtime image.
+tests/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Development tooling and environments
+.venv/
+venv/
+requirements-dev.txt
+.pre-commit-config.yaml
+Makefile
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Byte-code and editor noise
+__pycache__/
+*.py[cod]
+.idea/
+.vscode/
+.DS_Store
+
+# Documentation and planning — not runtime inputs.
+docs/
+*.md
+assets/
+examples/
+
+# Infrastructure and operator scripts run outside the container.
+infra/
+scripts/
+
+# Runtime output; these arrive as bind mounts, never as image content.
+reports/
+logs/
+
+# Secrets and key material must never enter the build context
+# (architecture §13.4).
+.env
+*.pem
+*.key
+id_rsa*
+known_hosts

@@ -1,0 +1,32 @@
+# CloudProbe — single-service compose (project-structure §10, ROADMAP Phase 6).
+#
+# Intentionally minimal: one service, no bundled LocalStack or Grafana, so the
+# compose file reflects what would actually deploy.  Config is bind-mounted
+# read-only; reports and logs are bind-mounted writable.  Every generated path
+# stays configurable through these mounts.
+
+services:
+  cloudprobe:
+    build:
+      # Build context is the repository root so the Dockerfile can COPY src/ and
+      # requirements.txt; the Dockerfile itself lives under docker/.
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: cloudprobe:latest
+    # oneshot exits after one cycle; override to `scheduler` for long-running.
+    environment:
+      CLOUDPROBE_MODE: ${CLOUDPROBE_MODE:-oneshot}
+      CLOUDPROBE_CONFIG: /etc/cloudprobe/configs
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ../configs:/etc/cloudprobe/configs:ro
+      - ../reports:/var/cloudprobe/reports
+      - ../logs:/var/cloudprobe/logs
+    # Reassert the image's non-root identity at run time.
+    user: "10001:10001"
+    # Compatible with the read-only-root design (architecture §13.5): only the
+    # mounted volumes are writable.
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
