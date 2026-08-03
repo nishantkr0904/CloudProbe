@@ -1,0 +1,157 @@
+{
+  "alerts": {
+    "breached": 1,
+    "by_severity": {
+      "warning": 1
+    },
+    "total": 3
+  },
+  "breaches": [
+    {
+      "breached": true,
+      "metric": "latency_ms",
+      "observed_value": 250.0,
+      "operator": ">",
+      "probe_type": "tcp",
+      "rule_id": "high-latency",
+      "severity": "warning",
+      "target": {
+        "host": "10.20.1.10",
+        "instance_id": "i-web1",
+        "label": "web",
+        "port": 443,
+        "probe_types": [
+          "tcp"
+        ],
+        "subnet_id": "subnet-aaa",
+        "tags": {
+          "Environment": "lab",
+          "Name": "web"
+        },
+        "target_id": "web-1",
+        "vpc_id": "vpc-aaa"
+      },
+      "threshold_value": 100.0,
+      "timestamp": "2026-08-03T06:00:00+00:00"
+    }
+  ],
+  "inventory": {
+    "subnet_count": 2,
+    "target_count": 2,
+    "vpc_count": 1
+  },
+  "latency": {
+    "count": 2,
+    "maximum": 250.0,
+    "mean": 131.25,
+    "minimum": 12.5,
+    "p50": 12.5,
+    "p95": 250.0,
+    "p99": 250.0
+  },
+  "metadata": {
+    "completed_at": "2026-08-03T06:00:02+00:00",
+    "hostname": "ops-laptop",
+    "mode": "oneshot",
+    "run_id": "run-20260803",
+    "started_at": "2026-08-03T06:00:00+00:00"
+  },
+  "outcomes": {
+    "failures": 1,
+    "successes": 2,
+    "total": 3
+  },
+  "outcomes_by_probe_type": {
+    "tcp": {
+      "failures": 1,
+      "successes": 2,
+      "total": 3
+    }
+  },
+  "outcomes_by_target": {
+    "api-1": {
+      "failures": 1,
+      "successes": 1,
+      "total": 2
+    },
+    "web-1": {
+      "failures": 0,
+      "successes": 1,
+      "total": 1
+    }
+  },
+  "results": [
+    {
+      "error_class": null,
+      "latency_ms": 250.0,
+      "probe_type": "tcp",
+      "raw": null,
+      "success": true,
+      "target": {
+        "host": "10.20.1.10",
+        "instance_id": "i-web1",
+        "label": "web",
+        "port": 443,
+        "probe_types": [
+          "tcp"
+        ],
+        "subnet_id": "subnet-aaa",
+        "tags": {
+          "Environment": "lab",
+          "Name": "web"
+        },
+        "target_id": "web-1",
+        "vpc_id": "vpc-aaa"
+      },
+      "timestamp": "2026-08-03T06:00:00+00:00"
+    },
+    {
+      "error_class": null,
+      "latency_ms": 12.5,
+      "probe_type": "tcp",
+      "raw": null,
+      "success": true,
+      "target": {
+        "host": "10.20.2.20",
+        "instance_id": "i-api1",
+        "label": "api",
+        "port": 8080,
+        "probe_types": [
+          "tcp"
+        ],
+        "subnet_id": "subnet-bbb",
+        "tags": {
+          "Environment": "lab",
+          "Name": "api"
+        },
+        "target_id": "api-1",
+        "vpc_id": "vpc-aaa"
+      },
+      "timestamp": "2026-08-03T06:00:00+00:00"
+    },
+    {
+      "error_class": "timeout",
+      "latency_ms": 0.0,
+      "probe_type": "tcp",
+      "raw": null,
+      "success": false,
+      "target": {
+        "host": "10.20.2.20",
+        "instance_id": "i-api1",
+        "label": "api",
+        "port": 8080,
+        "probe_types": [
+          "tcp"
+        ],
+        "subnet_id": "subnet-bbb",
+        "tags": {
+          "Environment": "lab",
+          "Name": "api"
+        },
+        "target_id": "api-1",
+        "vpc_id": "vpc-aaa"
+      },
+      "timestamp": "2026-08-03T06:00:00+00:00"
+    }
+  ]
+}

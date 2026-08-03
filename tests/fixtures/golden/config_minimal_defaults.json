@@ -1,0 +1,40 @@
+{
+  "alert_rules": [],
+  "probe": {
+    "default_timeout_seconds": 10,
+    "http_user_agent": "cloudprobe/0.0.1",
+    "retry_attempts": 1,
+    "retry_backoff_seconds": 1.0
+  },
+  "schedules": [
+    {
+      "cron_expression": "*/5 * * * *",
+      "max_concurrency": 10,
+      "probe_type": "tcp",
+      "timeout_seconds": 10
+    }
+  ],
+  "targets": [
+    {
+      "host": "10.20.1.10",
+      "instance_id": null,
+      "label": null,
+      "port": 443,
+      "probe_types": [
+        "tcp"
+      ],
+      "subnet_id": null,
+      "tags": {},
+      "target_id": "web-1",
+      "vpc_id": null
+    }
+  ],
+  "thresholds": [
+    {
+      "consecutive_failures": 3,
+      "max_latency_ms": 1000,
+      "min_success_ratio": 0.9,
+      "probe_type": "tcp"
+    }
+  ]
+}

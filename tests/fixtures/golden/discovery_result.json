@@ -1,0 +1,55 @@
+{
+  "collisions": [
+    {
+      "dropped_source": "aws",
+      "dropped_target_id": "i-web1",
+      "host": "10.20.1.10",
+      "kept_source": "static",
+      "kept_target_id": "web-static",
+      "port": 443,
+      "probe_type": "tcp"
+    }
+  ],
+  "failures": [
+    {
+      "reason": "throttled",
+      "source": "aws"
+    }
+  ],
+  "inventory": {
+    "entries": [
+      {
+        "source": "static",
+        "target": {
+          "host": "10.20.1.10",
+          "instance_id": null,
+          "label": null,
+          "port": 443,
+          "probe_types": [
+            "tcp"
+          ],
+          "subnet_id": null,
+          "tags": {},
+          "target_id": "web-static",
+          "vpc_id": null
+        }
+      },
+      {
+        "source": "aws",
+        "target": {
+          "host": "10.20.2.20",
+          "instance_id": null,
+          "label": null,
+          "port": 8080,
+          "probe_types": [
+            "tcp"
+          ],
+          "subnet_id": null,
+          "tags": {},
+          "target_id": "i-api1",
+          "vpc_id": null
+        }
+      }
+    ]
+  }
+}

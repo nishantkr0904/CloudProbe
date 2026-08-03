@@ -1,0 +1,55 @@
+{
+  "route_tables": [
+    {
+      "is_main": true,
+      "route_table_id": "rtb-aaa",
+      "routes": [
+        {
+          "destination_cidr_block": "10.20.0.0/16",
+          "gateway_id": "local",
+          "state": "active"
+        },
+        {
+          "destination_cidr_block": "0.0.0.0/0",
+          "gateway_id": "igw-aaa",
+          "state": "active"
+        }
+      ],
+      "subnet_ids": [
+        "subnet-aaa"
+      ],
+      "vpc_id": "vpc-aaa"
+    }
+  ],
+  "subnets": [
+    {
+      "availability_zone": "us-east-1a",
+      "cidr_block": "10.20.1.0/24",
+      "label": "web-subnet",
+      "subnet_id": "subnet-aaa",
+      "tags": {
+        "Name": "web-subnet"
+      },
+      "vpc_id": "vpc-aaa"
+    },
+    {
+      "availability_zone": "us-east-1b",
+      "cidr_block": "10.20.2.0/24",
+      "label": null,
+      "subnet_id": "subnet-bbb",
+      "tags": {},
+      "vpc_id": "vpc-aaa"
+    }
+  ],
+  "vpcs": [
+    {
+      "cidr_block": "10.20.0.0/16",
+      "is_default": false,
+      "label": "lab-vpc",
+      "tags": {
+        "Name": "lab-vpc"
+      },
+      "vpc_id": "vpc-aaa"
+    }
+  ]
+}

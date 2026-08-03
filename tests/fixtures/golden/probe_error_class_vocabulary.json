@@ -1,0 +1,9 @@
+{
+  "COMMAND_ERROR": "command_error",
+  "DNS_FAILURE": "dns_failure",
+  "PROTOCOL_ERROR": "protocol_error",
+  "REFUSED": "refused",
+  "SOCKET_ERROR": "socket_error",
+  "TIMEOUT": "timeout",
+  "UNREACHABLE": "unreachable"
+}

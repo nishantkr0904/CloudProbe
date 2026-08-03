@@ -1,0 +1,33 @@
+[
+  {
+    "host": "10.20.1.10",
+    "instance_id": "i-web1",
+    "label": "web",
+    "port": null,
+    "probe_types": [
+      "tcp"
+    ],
+    "subnet_id": "subnet-aaa",
+    "tags": {
+      "Environment": "lab",
+      "Name": "web"
+    },
+    "target_id": "i-web1",
+    "vpc_id": "vpc-aaa"
+  },
+  {
+    "host": "10.20.2.20",
+    "instance_id": "i-api1",
+    "label": "api",
+    "port": null,
+    "probe_types": [
+      "tcp"
+    ],
+    "subnet_id": "subnet-bbb",
+    "tags": {
+      "Name": "api"
+    },
+    "target_id": "i-api1",
+    "vpc_id": "vpc-aaa"
+  }
+]

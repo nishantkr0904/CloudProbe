@@ -1,0 +1,5 @@
+{
+  "Message": "CloudProbe alert: high-latency\nTarget: web-1 (10.20.1.10)\nProbe type: tcp\nSeverity: warning\nBreach: latency_ms > 100.0 (observed 250.0)\nTimestamp: 2026-08-03T06:00:00+00:00\nBreached: yes\nAlarm: high-latency-web-1-latency_ms",
+  "Subject": "CloudProbe WARNING: high-latency on web-1",
+  "TopicArn": "arn:aws:sns:us-east-1:123456789012:cloudprobe-alerts"
+}

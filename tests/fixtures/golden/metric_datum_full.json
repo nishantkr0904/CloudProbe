@@ -1,0 +1,16 @@
+{
+  "Dimensions": [
+    {
+      "Name": "ProbeType",
+      "Value": "tcp"
+    },
+    {
+      "Name": "TargetId",
+      "Value": "web-1"
+    }
+  ],
+  "MetricName": "ProbeLatencyMs",
+  "Timestamp": "2026-08-03T06:00:00+00:00",
+  "Unit": "Milliseconds",
+  "Value": 12.5
+}

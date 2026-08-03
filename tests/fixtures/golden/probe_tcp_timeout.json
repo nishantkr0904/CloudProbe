@@ -1,0 +1,24 @@
+{
+  "error_class": "timeout",
+  "latency_ms": 250.0,
+  "probe_type": "tcp",
+  "raw": "timed out",
+  "success": false,
+  "target": {
+    "host": "10.20.1.10",
+    "instance_id": "i-web1",
+    "label": "web",
+    "port": 443,
+    "probe_types": [
+      "tcp"
+    ],
+    "subnet_id": "subnet-aaa",
+    "tags": {
+      "Environment": "lab",
+      "Name": "web"
+    },
+    "target_id": "web-1",
+    "vpc_id": "vpc-aaa"
+  },
+  "timestamp": "2026-08-03T06:00:00+00:00"
+}

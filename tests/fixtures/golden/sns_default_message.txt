@@ -1,0 +1,8 @@
+CloudProbe alert: high-latency
+Target: web-1 (10.20.1.10)
+Probe type: tcp
+Severity: warning
+Breach: latency_ms > 100.0 (observed 250.0)
+Timestamp: 2026-08-03T06:00:00+00:00
+Breached: yes
+Alarm: high-latency-web-1-latency_ms

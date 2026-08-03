@@ -1,0 +1,30 @@
+{
+  "AlarmDescription": "warning alarm for web-1 (latency_ms > 100.0)",
+  "AlarmName": "high-latency-web-1-latency_ms",
+  "ComparisonOperator": "GreaterThanThreshold",
+  "Dimensions": [
+    {
+      "Name": "ProbeType",
+      "Value": "tcp"
+    },
+    {
+      "Name": "TargetId",
+      "Value": "web-1"
+    },
+    {
+      "Name": "Name",
+      "Value": "web"
+    },
+    {
+      "Name": "Environment",
+      "Value": "lab"
+    }
+  ],
+  "EvaluationPeriods": 1,
+  "MetricName": "ProbeLatencyMs",
+  "Namespace": "CloudProbe/Network",
+  "Period": 60,
+  "Statistic": "Average",
+  "Threshold": 100.0,
+  "TreatMissingData": "notBreaching"
+}

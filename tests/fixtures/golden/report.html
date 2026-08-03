@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CloudProbe report run-20260803</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 2rem; color: #1a1a1a; }
+h1 { margin-bottom: 0.25rem; }
+h2 { margin-top: 2rem; border-bottom: 1px solid #ddd; padding-bottom: 0.25rem; }
+table { border-collapse: collapse; width: 100%; margin-top: 0.5rem; }
+th, td { border: 1px solid #ccc; padding: 0.4rem 0.6rem; text-align: left; }
+th { background: #f4f4f4; }
+.ok { color: #157347; font-weight: 600; }
+.fail { color: #b02a37; font-weight: 600; }
+.empty { color: #666; font-style: italic; }
+.sev-critical { color: #b02a37; font-weight: 600; }
+.sev-warning { color: #997404; font-weight: 600; }
+.sev-info { color: #0a58ca; }
+</style>
+</head>
+<body>
+<h1>CloudProbe report run-20260803</h1>
+<h2>Run metadata</h2>
+<table>
+<tr><td>Run ID</td><td>run-20260803</td></tr>
+<tr><td>Mode</td><td>oneshot</td></tr>
+<tr><td>Host</td><td>ops-laptop</td></tr>
+<tr><td>Started</td><td>2026-08-03T06:00:00+00:00</td></tr>
+<tr><td>Completed</td><td>2026-08-03T06:00:02+00:00</td></tr>
+<tr><td>Duration (s)</td><td>2.000</td></tr>
+</table>
+<h2>Inventory</h2>
+<table>
+<tr><td>Targets</td><td>2</td></tr>
+<tr><td>VPCs</td><td>1</td></tr>
+<tr><td>Subnets</td><td>2</td></tr>
+</table>
+<h2>Outcomes</h2>
+<h3>Overall</h3>
+<table>
+<tr><th>Total</th><th>Successes</th><th>Failures</th><th>Success rate</th></tr>
+<tr><td>3</td><td><span class="ok">2</span></td><td><span class="fail">1</span></td><td>66.7%</td></tr>
+</table>
+<h3>By probe type</h3>
+<table>
+<tr><th>Probe type</th><th>Total</th><th>Successes</th><th>Failures</th><th>Success rate</th></tr>
+<tr><td>tcp</td><td>3</td><td><span class="ok">2</span></td><td><span class="fail">1</span></td><td>66.7%</td></tr>
+</table>
+<h3>By target</h3>
+<table>
+<tr><th>Target</th><th>Total</th><th>Successes</th><th>Failures</th><th>Success rate</th></tr>
+<tr><td>web-1</td><td>1</td><td><span class="ok">1</span></td><td><span class="fail">0</span></td><td>100.0%</td></tr>
+<tr><td>api-1</td><td>2</td><td><span class="ok">1</span></td><td><span class="fail">1</span></td><td>50.0%</td></tr>
+</table>
+<h2>Latency</h2>
+<table>
+<tr><td>Successful probes</td><td>2</td></tr>
+<tr><td>Minimum (ms)</td><td>12.500</td></tr>
+<tr><td>Maximum (ms)</td><td>250.000</td></tr>
+<tr><td>Mean (ms)</td><td>131.250</td></tr>
+<tr><td>p50 (ms)</td><td>12.500</td></tr>
+<tr><td>p95 (ms)</td><td>250.000</td></tr>
+<tr><td>p99 (ms)</td><td>250.000</td></tr>
+</table>
+<h2>Alert summary</h2>
+<table>
+<tr><td>Evaluated</td><td>3</td></tr>
+<tr><td>Breached</td><td>1</td></tr>
+<tr><td><span class="sev-warning">warning</span></td><td>1</td></tr>
+</table>
+<h2>Probe results</h2>
+<table>
+<tr><th>Target</th><th>Host</th><th>Probe</th><th>Status</th><th>Latency (ms)</th><th>Error</th><th>Timestamp</th></tr>
+<tr><td>web-1</td><td>10.20.1.10</td><td>tcp</td><td><span class="ok">success</span></td><td>250.000</td><td></td><td>2026-08-03T06:00:00+00:00</td></tr>
+<tr><td>api-1</td><td>10.20.2.20</td><td>tcp</td><td><span class="ok">success</span></td><td>12.500</td><td></td><td>2026-08-03T06:00:00+00:00</td></tr>
+<tr><td>api-1</td><td>10.20.2.20</td><td>tcp</td><td><span class="fail">failure</span></td><td>0.000</td><td>timeout</td><td>2026-08-03T06:00:00+00:00</td></tr>
+</table>
+<h2>Breached alerts</h2>
+<table>
+<tr><th>Rule</th><th>Target</th><th>Probe</th><th>Severity</th><th>Metric</th><th>Observed</th><th>Threshold</th><th>Timestamp</th></tr>
+<tr><td>high-latency</td><td>web-1</td><td>tcp</td><td><span class="sev-warning">warning</span></td><td>latency_ms</td><td>250.0 &gt;</td><td>100.0</td><td>2026-08-03T06:00:00+00:00</td></tr>
+</table>
+</body>
+</html>

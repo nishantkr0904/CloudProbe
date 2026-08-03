@@ -1,0 +1,27 @@
+{
+  "breached": true,
+  "metric": "latency_ms",
+  "observed_value": 250.0,
+  "operator": ">",
+  "probe_type": "tcp",
+  "rule_id": "high-latency",
+  "severity": "warning",
+  "target": {
+    "host": "10.20.1.10",
+    "instance_id": "i-web1",
+    "label": "web",
+    "port": 443,
+    "probe_types": [
+      "tcp"
+    ],
+    "subnet_id": "subnet-aaa",
+    "tags": {
+      "Environment": "lab",
+      "Name": "web"
+    },
+    "target_id": "web-1",
+    "vpc_id": "vpc-aaa"
+  },
+  "threshold_value": 100.0,
+  "timestamp": "2026-08-03T06:00:00+00:00"
+}

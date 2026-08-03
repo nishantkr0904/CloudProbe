@@ -1,0 +1,7 @@
+{
+  "HTTP": "http",
+  "ICMP": "icmp",
+  "SSH": "ssh",
+  "TCP": "tcp",
+  "UDP": "udp"
+}
