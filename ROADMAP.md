@@ -291,7 +291,7 @@ Each phase closes with: (a) code merged, (b) tests passing, (c) `docs/` entry wr
 
 **Deliverables**
 - `.github/workflows/ci.yml` — matrix on Python 3.11/3.12: ruff → mypy → unit → integration → coverage upload. Runs on every PR and push to `main`.
-- `.github/workflows/docker.yml` — builds the image on PRs that touch `docker/` or `src/`, runs a smoke test (`docker run --rm cloudprobe --version`).
+- `.github/workflows/docker.yml` — builds the image on PRs that touch `docker/`, `src/`, or `requirements*.txt`, runs a smoke test (`docker run --rm cloudprobe --version`).
 - `.github/workflows/nightly.yml` — full regression + failure scenarios, opens a GitHub Issue on failure.
 - Dependabot config for pip + docker + GH Actions.
 - CODEOWNERS, PR template (checklist: tests added, docs updated, no new lint warnings), issue templates.

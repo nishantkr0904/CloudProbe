@@ -145,7 +145,7 @@ Pre-commit runs automatically on `git commit`. To skip a hook in an emergency us
 | **pytest** | Test runner. Four markers (`unit`, `integration`, `regression`, `failure_scenarios`) map to the taxonomy in [`docs/architecture.md`](docs/architecture.md) §10. | `pyproject.toml` `[tool.pytest.ini_options]` |
 | **pytest-cov** + **coverage** | Coverage collection with a 90% hard floor. | `pyproject.toml` `[tool.coverage.*]` |
 | **pytest-socket** | Fails any test that opens a real socket. Protects the invariant that CI runs offline. | Enabled per-test as needed. |
-| **moto** | AWS API mocking for the integration tier — scoped to the four services CloudProbe actually calls (EC2, CloudWatch, SNS, S3). | `pyproject.toml` `[project.optional-dependencies]` |
+| **moto** | AWS API mocking for the integration tier — scoped to the four services CloudProbe actually calls (EC2, CloudWatch, SNS, S3). | `requirements-dev.txt` |
 | **pre-commit** | Runs the fast subset of checks locally on every commit. | `.pre-commit-config.yaml` |
 | **yamllint** | Catches YAML errors in `configs/` and `docs/` before they reach the loader. | `.pre-commit-config.yaml` |
 
