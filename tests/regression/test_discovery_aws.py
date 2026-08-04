@@ -66,7 +66,7 @@ class _FakeEC2Client:
         return _FakePaginator(self._pages_by_operation.get(operation_name, []))
 
 
-_DESCRIBE_INSTANCES_PAGES = [
+_DESCRIBE_INSTANCES_PAGES: list[Mapping[str, Any]] = [
     {
         "Reservations": [
             {
@@ -94,7 +94,7 @@ _DESCRIBE_INSTANCES_PAGES = [
     }
 ]
 
-_TOPOLOGY_PAGES = {
+_TOPOLOGY_PAGES: dict[str, list[Mapping[str, Any]]] = {
     "describe_vpcs": [
         {
             "Vpcs": [
@@ -158,7 +158,7 @@ _TOPOLOGY_PAGES = {
 
 @pytest.mark.regression
 class TestEC2TargetShape:
-    def test_discovered_target_shape_is_frozen(self, update_goldens) -> None:
+    def test_discovered_target_shape_is_frozen(self, update_goldens: bool) -> None:
         client = _FakeEC2Client({"describe_instances": _DESCRIBE_INSTANCES_PAGES})
 
         targets = discover_ec2_targets(client, probe_types=[ProbeType.TCP])
@@ -172,7 +172,7 @@ class TestEC2TargetShape:
 
 @pytest.mark.regression
 class TestVpcTopologyShape:
-    def test_collected_topology_shape_is_frozen(self, update_goldens) -> None:
+    def test_collected_topology_shape_is_frozen(self, update_goldens: bool) -> None:
         client = _FakeEC2Client(_TOPOLOGY_PAGES)
 
         topology = collect_network_topology(client, vpc_ids=["vpc-aaa"])

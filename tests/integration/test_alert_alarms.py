@@ -14,6 +14,7 @@ requires no credentials or network.
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import cast
 
 import boto3
 import pytest
@@ -26,6 +27,7 @@ from cloudprobe.alerting import (
     ComparisonOperator,
     MetricKind,
 )
+from cloudprobe.alerting.alarms import CloudWatchAlarmClient
 from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType, Target
 from cloudprobe.probes import ProbeResult
 
@@ -65,7 +67,9 @@ class TestAlertsToCloudWatchAlarms:
     def test_a_breached_alert_becomes_a_cloudwatch_alarm(self) -> None:
         with mock_aws():
             client = boto3.client("cloudwatch", region_name="us-east-1")
-            publisher = CloudWatchAlarmPublisher(client, namespace="CloudProbe/Test")
+            publisher = CloudWatchAlarmPublisher(
+                cast(CloudWatchAlarmClient, client), namespace="CloudProbe/Test"
+            )
 
             alerts = AlertManager().evaluate(_result(latency_ms=250.0), [_rule(100.0)])
             assert len(alerts) == 1
@@ -91,7 +95,9 @@ class TestAlertsToCloudWatchAlarms:
         """
         with mock_aws():
             client = boto3.client("cloudwatch", region_name="us-east-1")
-            publisher = CloudWatchAlarmPublisher(client, namespace="CloudProbe/Test")
+            publisher = CloudWatchAlarmPublisher(
+                cast(CloudWatchAlarmClient, client), namespace="CloudProbe/Test"
+            )
 
             alert = AlertManager().evaluate(_result(latency_ms=250.0), [_rule(100.0)])[0]
             first = publisher.publish(alert)
@@ -110,7 +116,9 @@ class TestAlertsToCloudWatchAlarms:
         """
         with mock_aws():
             client = boto3.client("cloudwatch", region_name="us-east-1")
-            publisher = CloudWatchAlarmPublisher(client, namespace="CloudProbe/Test")
+            publisher = CloudWatchAlarmPublisher(
+                cast(CloudWatchAlarmClient, client), namespace="CloudProbe/Test"
+            )
 
             clear = AlertManager().evaluate(_result(latency_ms=50.0), [_rule(100.0)])[0]
             breach = AlertManager().evaluate(_result(latency_ms=250.0), [_rule(100.0)])[0]

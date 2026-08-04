@@ -14,6 +14,7 @@ in memory and requires no credentials or network.
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import cast
 
 import boto3
 import pytest
@@ -27,6 +28,7 @@ from cloudprobe.alerting import (
     NotificationPublishError,
     SNSNotificationPublisher,
 )
+from cloudprobe.alerting.notifications import SnsClient
 from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType, Target
 from cloudprobe.probes import ProbeErrorClass, ProbeResult
 
@@ -68,7 +70,7 @@ class TestAlertsToSnsNotifications:
         with mock_aws():
             client = boto3.client("sns", region_name="us-east-1")
             topic_arn = client.create_topic(Name="cloudprobe-alerts")["TopicArn"]
-            publisher = SNSNotificationPublisher(client, topic_arn)
+            publisher = SNSNotificationPublisher(cast(SnsClient, client), topic_arn)
 
             alerts = AlertManager().evaluate(_failed_result(), [_availability_rule()])
             assert len(alerts) == 1
@@ -93,7 +95,7 @@ class TestAlertsToSnsNotifications:
             # Well-formed but never created, so the ARN passes construction
             # validation and is refused by the service instead.
             publisher = SNSNotificationPublisher(
-                client, "arn:aws:sns:us-east-1:123456789012:no-such-topic"
+                cast(SnsClient, client), "arn:aws:sns:us-east-1:123456789012:no-such-topic"
             )
 
             alert = AlertManager().evaluate(_failed_result(), [_availability_rule()])[0]

@@ -341,12 +341,12 @@ class TestImmutability:
     def test_target_is_frozen(self) -> None:
         t = Target.model_validate(_valid_target())
         with pytest.raises(ValidationError):
-            t.target_id = "other"  # type: ignore[misc]
+            t.target_id = "other"
 
     def test_config_is_frozen(self) -> None:
         cfg = CloudProbeConfig.model_validate(_valid_config())
         with pytest.raises(ValidationError):
-            cfg.targets = []  # type: ignore[misc]
+            cfg.targets = []
 
 
 # ---------------------------------------------------------------------------

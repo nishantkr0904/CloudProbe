@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from dataclasses import FrozenInstanceError
 from datetime import datetime, timedelta
+from typing import Any
 
 import pytest
 
@@ -52,8 +53,8 @@ _START = datetime(2026, 8, 3, 6, 0, 0)
 _END = datetime(2026, 8, 3, 6, 0, 12)
 
 
-def _target(**overrides) -> Target:
-    base = {
+def _target(**overrides: Any) -> Target:
+    base: dict[str, Any] = {
         "target_id": "web-1",
         "host": "10.20.1.10",
         "port": 443,
@@ -65,8 +66,8 @@ def _target(**overrides) -> Target:
     return Target(**base)
 
 
-def _result(**overrides) -> ProbeResult:
-    base = {
+def _result(**overrides: Any) -> ProbeResult:
+    base: dict[str, Any] = {
         "target": _target(),
         "probe_type": ProbeType.TCP,
         "success": True,
@@ -77,8 +78,8 @@ def _result(**overrides) -> ProbeResult:
     return ProbeResult(**base)
 
 
-def _alert(**overrides) -> Alert:
-    base = {
+def _alert(**overrides: Any) -> Alert:
+    base: dict[str, Any] = {
         "rule_id": "rule-1",
         "target": _target(),
         "probe_type": ProbeType.TCP,

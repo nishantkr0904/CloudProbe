@@ -28,10 +28,12 @@ clock is read.  No production code changes are required.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from cloudprobe.config import load
-from cloudprobe.config.models import ProbeType
+from cloudprobe.config.models import CloudProbeConfig, ProbeType
 from cloudprobe.scheduler import DuplicateJobError, build_jobs, run_once
 
 # Two probe types, so ordering and per-job isolation are observable.  tcp is
@@ -56,7 +58,7 @@ probe:
 
 
 @pytest.fixture
-def config(tmp_path):
+def config(tmp_path: Path) -> CloudProbeConfig:
     path = tmp_path / "config.yaml"
     path.write_text(_CONFIG, encoding="utf-8")
     return load(str(path))
@@ -64,7 +66,7 @@ def config(tmp_path):
 
 @pytest.mark.regression
 class TestOneShotSemantics:
-    def test_each_probe_type_runs_exactly_once_in_order(self, config) -> None:
+    def test_each_probe_type_runs_exactly_once_in_order(self, config: CloudProbeConfig) -> None:
         invoked: list[ProbeType] = []
 
         summary = run_once(config, invoked.append)
@@ -77,7 +79,7 @@ class TestOneShotSemantics:
             ProbeType.ICMP,
         ]
 
-    def test_job_creation_is_one_per_schedule_in_order(self, config) -> None:
+    def test_job_creation_is_one_per_schedule_in_order(self, config: CloudProbeConfig) -> None:
         jobs = build_jobs(config, lambda _probe_type: None)
 
         assert [job.probe_type for job in jobs] == [ProbeType.TCP, ProbeType.ICMP]
@@ -87,7 +89,7 @@ class TestOneShotSemantics:
 
 @pytest.mark.regression
 class TestFailureIsolation:
-    def test_one_failing_action_does_not_abort_the_pass(self, config) -> None:
+    def test_one_failing_action_does_not_abort_the_pass(self, config: CloudProbeConfig) -> None:
         invoked: list[ProbeType] = []
 
         def action(probe_type: ProbeType) -> None:
@@ -112,7 +114,7 @@ class TestFailureIsolation:
 
 @pytest.mark.regression
 class TestDuplicateScheduleRejected:
-    def test_duplicate_probe_type_is_a_scheduler_error(self, tmp_path) -> None:
+    def test_duplicate_probe_type_is_a_scheduler_error(self, tmp_path: Path) -> None:
         # Two schedules for one probe type is a collision the config layer does
         # not reject; the scheduler must, rather than register a job twice.
         duplicate = """\

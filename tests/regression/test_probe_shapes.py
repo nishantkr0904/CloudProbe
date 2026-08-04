@@ -71,19 +71,19 @@ def _result(
 
 @pytest.mark.regression
 class TestProbeResultShape:
-    def test_tcp_success_shape_is_frozen(self, update_goldens) -> None:
+    def test_tcp_success_shape_is_frozen(self, update_goldens: bool) -> None:
         result = _result(ProbeType.TCP, success=True, latency_ms=12.5)
         assert_against_golden(result, "probe_tcp_success.json", update=update_goldens)
 
-    def test_icmp_success_shape_is_frozen(self, update_goldens) -> None:
+    def test_icmp_success_shape_is_frozen(self, update_goldens: bool) -> None:
         result = _result(ProbeType.ICMP, success=True, latency_ms=1.25)
         assert_against_golden(result, "probe_icmp_success.json", update=update_goldens)
 
-    def test_udp_success_shape_is_frozen(self, update_goldens) -> None:
+    def test_udp_success_shape_is_frozen(self, update_goldens: bool) -> None:
         result = _result(ProbeType.UDP, success=True, latency_ms=8.0)
         assert_against_golden(result, "probe_udp_success.json", update=update_goldens)
 
-    def test_tcp_timeout_failure_shape_is_frozen(self, update_goldens) -> None:
+    def test_tcp_timeout_failure_shape_is_frozen(self, update_goldens: bool) -> None:
         result = _result(
             ProbeType.TCP,
             success=False,
@@ -96,7 +96,7 @@ class TestProbeResultShape:
 
 @pytest.mark.regression
 class TestProbeErrorTaxonomy:
-    def test_error_class_vocabulary_is_frozen(self, update_goldens) -> None:
+    def test_error_class_vocabulary_is_frozen(self, update_goldens: bool) -> None:
         # The complete set of wire values the failure taxonomy exposes.  Frozen
         # so that adding, removing or renaming a class is a deliberate, visible
         # change — these strings are metric dimensions downstream.
@@ -107,7 +107,7 @@ class TestProbeErrorTaxonomy:
             update=update_goldens,
         )
 
-    def test_probe_type_vocabulary_is_frozen(self, update_goldens) -> None:
+    def test_probe_type_vocabulary_is_frozen(self, update_goldens: bool) -> None:
         vocabulary = {member.name: member.value for member in ProbeType}
         assert_against_golden(
             vocabulary,

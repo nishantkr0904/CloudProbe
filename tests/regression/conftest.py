@@ -24,7 +24,7 @@ import pytest
 from cloudprobe.alerting import AlertManager, AlertRuleSpec, ComparisonOperator, MetricKind
 from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType, Target
 from cloudprobe.probes import ProbeErrorClass, ProbeResult
-from cloudprobe.reporting import RunMode, assemble, build_metadata
+from cloudprobe.reporting import Report, RunMode, assemble, build_metadata
 
 # One fixed instant for every timestamp in the suite: golden artifacts must not
 # depend on wall-clock time (architecture §10.3).
@@ -80,7 +80,7 @@ def api_target() -> Target:
 
 
 @pytest.fixture
-def frozen_report(web_target: Target, api_target: Target):
+def frozen_report(web_target: Target, api_target: Target) -> Report:
     """A fully-assembled report built through the real reporting pipeline.
 
     A slow success (breaches the latency rule), a healthy success and a

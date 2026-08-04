@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from html.parser import HTMLParser
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import pytest
 
@@ -48,8 +48,8 @@ _START = datetime(2026, 8, 3, 6, 0, 0)
 _END = datetime(2026, 8, 3, 6, 0, 12)
 
 
-def _target(target_id: str = "web-1", host: str = "10.20.1.10", **overrides) -> Target:
-    base = {
+def _target(target_id: str = "web-1", host: str = "10.20.1.10", **overrides: Any) -> Target:
+    base: dict[str, Any] = {
         "target_id": target_id,
         "host": host,
         "port": 443,
@@ -61,8 +61,8 @@ def _target(target_id: str = "web-1", host: str = "10.20.1.10", **overrides) -> 
     return Target(**base)
 
 
-def _result(**overrides) -> ProbeResult:
-    base = {
+def _result(**overrides: Any) -> ProbeResult:
+    base: dict[str, Any] = {
         "target": _target(),
         "probe_type": ProbeType.TCP,
         "success": True,
@@ -73,8 +73,8 @@ def _result(**overrides) -> ProbeResult:
     return ProbeResult(**base)
 
 
-def _alert(**overrides) -> Alert:
-    base = {
+def _alert(**overrides: Any) -> Alert:
+    base: dict[str, Any] = {
         "rule_id": "rule-1",
         "target": _target(),
         "probe_type": ProbeType.TCP,
@@ -90,8 +90,8 @@ def _alert(**overrides) -> Alert:
     return Alert(**base)
 
 
-def _metadata(**overrides) -> RunMetadata:
-    base = {
+def _metadata(**overrides: Any) -> RunMetadata:
+    base: dict[str, Any] = {
         "run_id": "run-1",
         "mode": RunMode.ONESHOT,
         "started_at": _START,
@@ -102,10 +102,10 @@ def _metadata(**overrides) -> RunMetadata:
     return RunMetadata(**base)
 
 
-def _report(**overrides) -> Report:
+def _report(**overrides: Any) -> Report:
     results = overrides.pop("results", (_result(),))
     breaches = overrides.pop("breaches", (_alert(),))
-    base = {
+    base: dict[str, Any] = {
         "metadata": _metadata(),
         "inventory": InventorySummary(target_count=1, vpc_count=1, subnet_count=1),
         "outcomes": OutcomeStats(total=1, successes=1, failures=0),

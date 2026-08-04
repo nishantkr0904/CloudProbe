@@ -14,6 +14,7 @@ no credentials and no network are required.
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import cast
 
 import boto3
 import pytest
@@ -21,6 +22,7 @@ from moto import mock_aws
 
 from cloudprobe.config.models import ProbeType, Target
 from cloudprobe.metrics import CloudWatchMetricsPublisher, Metric
+from cloudprobe.metrics.cloudwatch import CloudWatchClient
 from cloudprobe.probes import ProbeErrorClass, ProbeResult
 
 _TARGET = Target(
@@ -77,7 +79,9 @@ class TestProbeResultsToMetrics:
     def test_probe_results_publish_to_cloudwatch(self) -> None:
         with mock_aws():
             client = boto3.client("cloudwatch", region_name="us-east-1")
-            publisher = CloudWatchMetricsPublisher(client, namespace="CloudProbe/Test")
+            publisher = CloudWatchMetricsPublisher(
+                cast(CloudWatchClient, client), namespace="CloudProbe/Test"
+            )
 
             results = [
                 _result(success=True, latency_ms=12.5),
@@ -92,7 +96,9 @@ class TestProbeResultsToMetrics:
     def test_a_large_run_is_batched_into_multiple_requests(self) -> None:
         with mock_aws():
             client = boto3.client("cloudwatch", region_name="us-east-1")
-            publisher = CloudWatchMetricsPublisher(client, namespace="CloudProbe/Test")
+            publisher = CloudWatchMetricsPublisher(
+                cast(CloudWatchClient, client), namespace="CloudProbe/Test"
+            )
 
             # 25 successful results produce 50 metrics, exceeding the 20-per-
             # request CloudWatch limit the publisher batches against.
@@ -105,7 +111,9 @@ class TestProbeResultsToMetrics:
     def test_publishing_no_metrics_makes_no_request(self) -> None:
         with mock_aws():
             client = boto3.client("cloudwatch", region_name="us-east-1")
-            publisher = CloudWatchMetricsPublisher(client, namespace="CloudProbe/Test")
+            publisher = CloudWatchMetricsPublisher(
+                cast(CloudWatchClient, client), namespace="CloudProbe/Test"
+            )
 
             outcome = publisher.publish([])
 

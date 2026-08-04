@@ -19,11 +19,12 @@ from __future__ import annotations
 
 import socket
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
 from cloudprobe.config import load
-from cloudprobe.config.models import ProbeType
+from cloudprobe.config.models import CloudProbeConfig, ProbeType
 from cloudprobe.probes import ProbeResult, TcpProbe
 from cloudprobe.reporting import Report, RunMode, assemble, build_metadata
 from cloudprobe.scheduler import run_once
@@ -56,7 +57,7 @@ class _FakeConnection:
 
 
 @pytest.fixture
-def config(tmp_path):
+def config(tmp_path: Path) -> CloudProbeConfig:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(_CONFIG, encoding="utf-8")
     return load(str(config_file))
@@ -64,7 +65,9 @@ def config(tmp_path):
 
 @pytest.mark.integration
 class TestSchedulerToReporting:
-    def test_a_one_shot_pass_produces_a_report(self, config, monkeypatch) -> None:
+    def test_a_one_shot_pass_produces_a_report(
+        self, config: CloudProbeConfig, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         monkeypatch.setattr(
             socket,
             "create_connection",

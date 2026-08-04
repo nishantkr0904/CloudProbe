@@ -23,6 +23,8 @@ these strings and defaults; this only photographs them.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from cloudprobe.config import ConfigValidationError, load
@@ -62,7 +64,7 @@ schedules:
 
 
 @pytest.fixture
-def minimal_config_file(tmp_path):
+def minimal_config_file(tmp_path: Path) -> Path:
     path = tmp_path / "config.yaml"
     path.write_text(_MINIMAL_CONFIG, encoding="utf-8")
     return path
@@ -70,7 +72,9 @@ def minimal_config_file(tmp_path):
 
 @pytest.mark.regression
 class TestConfigDefaults:
-    def test_defaulted_config_shape_is_frozen(self, minimal_config_file, update_goldens) -> None:
+    def test_defaulted_config_shape_is_frozen(
+        self, minimal_config_file: Path, update_goldens: bool
+    ) -> None:
         # Loading a minimal document must always expand to the same fully
         # defaulted aggregate; the golden pins every default the code supplies.
         config = load(str(minimal_config_file))
@@ -84,7 +88,7 @@ class TestConfigDefaults:
 
 @pytest.mark.regression
 class TestConfigErrorMessages:
-    def test_validation_error_message_is_frozen(self, tmp_path, update_goldens) -> None:
+    def test_validation_error_message_is_frozen(self, tmp_path: Path, update_goldens: bool) -> None:
         path = tmp_path / "config.yaml"
         path.write_text(_INVALID_CONFIG, encoding="utf-8")
 
@@ -101,7 +105,7 @@ class TestConfigErrorMessages:
             update=update_goldens,
         )
 
-    def test_missing_file_message_is_frozen(self, tmp_path, update_goldens) -> None:
+    def test_missing_file_message_is_frozen(self, tmp_path: Path, update_goldens: bool) -> None:
         missing = tmp_path / "does-not-exist.yaml"
 
         # Broad on purpose: the frozen message, not the class, is the assertion.

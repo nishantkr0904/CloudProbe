@@ -24,7 +24,7 @@ import pytest
 from cloudprobe.alerting import AlertManager, AlertRuleSpec, ComparisonOperator, MetricKind
 from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType, Target
 from cloudprobe.probes import ProbeErrorClass, ProbeResult
-from cloudprobe.reporting import RunMode, assemble, build_metadata
+from cloudprobe.reporting import Report, RunMode, assemble, build_metadata
 from cloudprobe.reporting.renderers import render_html
 
 _WEB = Target(target_id="web-1", host="10.20.1.10", port=443, probe_types=[ProbeType.TCP])
@@ -79,7 +79,7 @@ def _latency_rule(threshold: float) -> AlertRuleSpec:
     )
 
 
-def _report():
+def _report() -> Report:
     """Assemble a report through the real reporting pipeline.
 
     A slow success (breaches the latency rule), a healthy success and a

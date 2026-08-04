@@ -15,6 +15,9 @@ EC2 call stays in memory, and no credentials are needed.
 
 from __future__ import annotations
 
+from pathlib import Path
+from typing import cast
+
 import boto3
 import pytest
 from moto import mock_aws
@@ -26,6 +29,7 @@ from cloudprobe.discovery import (
     build_inventory,
     discover_ec2_targets,
 )
+from cloudprobe.discovery.ec2 import EC2Client
 
 _CONFIG = """\
 targets:
@@ -44,7 +48,7 @@ schedules:
 
 @pytest.mark.integration
 class TestConfigToDiscovery:
-    def test_discovered_targets_merge_with_static_targets(self, tmp_path) -> None:
+    def test_discovered_targets_merge_with_static_targets(self, tmp_path: Path) -> None:
         with mock_aws():
             ec2 = boto3.client("ec2", region_name="us-east-1")
             ec2.run_instances(
@@ -66,7 +70,9 @@ class TestConfigToDiscovery:
             config = load(str(config_file))
 
             discovered = discover_ec2_targets(
-                ec2, probe_types=[ProbeType.TCP], tag_filters={"Name": "api-1"}
+                cast(EC2Client, ec2),
+                probe_types=[ProbeType.TCP],
+                tag_filters={"Name": "api-1"},
             )
             result = build_inventory(config.targets, discovered)
 

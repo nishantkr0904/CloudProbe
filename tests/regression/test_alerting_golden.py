@@ -33,6 +33,7 @@ from typing import Any
 import pytest
 
 from cloudprobe.alerting import (
+    Alert,
     AlertManager,
     AlertRuleSpec,
     CloudWatchAlarmPublisher,
@@ -40,7 +41,7 @@ from cloudprobe.alerting import (
     MetricKind,
     SNSNotificationPublisher,
 )
-from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType
+from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType, Target
 from cloudprobe.probes import ProbeErrorClass, ProbeResult
 from tests.regression.conftest import FROZEN_TIME
 from tests.regression.golden import assert_against_golden
@@ -81,7 +82,7 @@ def _latency_rule() -> AlertRuleSpec:
     )
 
 
-def _breaching_result(web_target) -> ProbeResult:
+def _breaching_result(web_target: Target) -> ProbeResult:
     # 250ms against a 100ms threshold: a breach, with a fixed timestamp so the
     # alert and every payload derived from it are deterministic.
     return ProbeResult(
@@ -93,7 +94,7 @@ def _breaching_result(web_target) -> ProbeResult:
     )
 
 
-def _breaching_alert(web_target):
+def _breaching_alert(web_target: Target) -> Alert:
     alerts = AlertManager().evaluate(_breaching_result(web_target), [_latency_rule()])
     assert len(alerts) == 1
     return alerts[0]
@@ -101,14 +102,14 @@ def _breaching_alert(web_target):
 
 @pytest.mark.regression
 class TestAlertDecisionShape:
-    def test_breached_alert_shape_is_frozen(self, web_target, update_goldens) -> None:
+    def test_breached_alert_shape_is_frozen(self, web_target: Target, update_goldens: bool) -> None:
         assert_against_golden(
             _breaching_alert(web_target),
             "alert_breached.json",
             update=update_goldens,
         )
 
-    def test_clear_alert_shape_is_frozen(self, web_target, update_goldens) -> None:
+    def test_clear_alert_shape_is_frozen(self, web_target: Target, update_goldens: bool) -> None:
         # An applicable rule that does *not* breach still produces an Alert, so
         # a report can show OK state alongside ALARM (architecture §8.4).
         result = ProbeResult(
@@ -128,7 +129,9 @@ class TestAlertDecisionShape:
             update=update_goldens,
         )
 
-    def test_availability_alert_on_failure_is_frozen(self, web_target, update_goldens) -> None:
+    def test_availability_alert_on_failure_is_frozen(
+        self, web_target: Target, update_goldens: bool
+    ) -> None:
         # A failed probe reads availability 0.0; the rule fires below 1.0.  This
         # pins how a failure — not a slow success — becomes a decision.
         spec = AlertRuleSpec(
@@ -164,7 +167,9 @@ class TestAlertDecisionShape:
 
 @pytest.mark.regression
 class TestAlarmPayload:
-    def test_put_metric_alarm_payload_is_frozen(self, web_target, update_goldens) -> None:
+    def test_put_metric_alarm_payload_is_frozen(
+        self, web_target: Target, update_goldens: bool
+    ) -> None:
         client = _RecordingCloudWatch()
 
         CloudWatchAlarmPublisher(client).publish(_breaching_alert(web_target))
@@ -176,7 +181,7 @@ class TestAlarmPayload:
             update=update_goldens,
         )
 
-    def test_binding_is_idempotent_across_observed_values(self, web_target) -> None:
+    def test_binding_is_idempotent_across_observed_values(self, web_target: Target) -> None:
         # The definition is a pure function of the rule: a breach at 250ms and a
         # clear at 12.5ms must bind the identical alarm, which is what makes
         # re-publishing safe (architecture §8.2).
@@ -198,7 +203,7 @@ class TestAlarmPayload:
 
 @pytest.mark.regression
 class TestSnsNotification:
-    def test_publish_payload_is_frozen(self, web_target, update_goldens) -> None:
+    def test_publish_payload_is_frozen(self, web_target: Target, update_goldens: bool) -> None:
         client = _RecordingSns()
 
         SNSNotificationPublisher(client, _TOPIC_ARN).publish(_breaching_alert(web_target))
@@ -210,7 +215,7 @@ class TestSnsNotification:
             update=update_goldens,
         )
 
-    def test_default_message_body_is_frozen(self, web_target, update_goldens) -> None:
+    def test_default_message_body_is_frozen(self, web_target: Target, update_goldens: bool) -> None:
         # The body an operator reads, frozen as text rather than JSON so the
         # golden diff shows the message exactly as it is delivered.
         notification = SNSNotificationPublisher(_RecordingSns(), _TOPIC_ARN).translate(
@@ -223,7 +228,7 @@ class TestSnsNotification:
             update=update_goldens,
         )
 
-    def test_default_subject_is_frozen(self, web_target, update_goldens) -> None:
+    def test_default_subject_is_frozen(self, web_target: Target, update_goldens: bool) -> None:
         notification = SNSNotificationPublisher(_RecordingSns(), _TOPIC_ARN).translate(
             _breaching_alert(web_target)
         )

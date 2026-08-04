@@ -202,14 +202,14 @@ class TestImmutability:
     def test_entry_is_frozen(self) -> None:
         entry = _entry()
         with pytest.raises(ValidationError):
-            entry.source = InventorySource.AWS  # type: ignore[misc]
+            entry.source = InventorySource.AWS
 
     def test_inventory_is_frozen(self) -> None:
         inv = Inventory()
         with pytest.raises(ValidationError):
-            inv.entries = []  # type: ignore[misc]
+            inv.entries = []
 
     def test_result_is_frozen(self) -> None:
         result = DiscoveryResult(inventory=Inventory())
         with pytest.raises(ValidationError):
-            result.failures = []  # type: ignore[misc]
+            result.failures = []

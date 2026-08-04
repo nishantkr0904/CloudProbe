@@ -93,7 +93,7 @@ class TestInventoryPrecedence:
 
 @pytest.mark.regression
 class TestInventoryShape:
-    def test_discovery_result_shape_is_frozen(self, update_goldens) -> None:
+    def test_discovery_result_shape_is_frozen(self, update_goldens: bool) -> None:
         result = build_inventory(_STATIC, _DISCOVERED, _FAILURES)
 
         assert_against_golden(

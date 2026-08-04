@@ -24,7 +24,7 @@ production code changes are required.
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, ClassVar
+from typing import Any, ClassVar, cast
 
 import paramiko
 import pytest
@@ -103,7 +103,7 @@ def _executor(client: _FakeClient) -> SSHExecutor:
         username="ec2-user",
         key_filename="/keys/lab.pem",
         timeout=10.0,
-        client_factory=lambda: client,
+        client_factory=lambda: cast(paramiko.SSHClient, client),
     )
 
 

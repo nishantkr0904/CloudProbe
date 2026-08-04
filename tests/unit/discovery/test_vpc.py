@@ -372,8 +372,9 @@ class TestPaginationAndFilters:
 class TestTopologyAccessors:
     def test_vpc_lookup_by_id(self) -> None:
         topology = NetworkTopology(vpcs=[VpcMetadata(vpc_id="vpc-123", cidr_block="10.0.0.0/16")])
-        assert topology.vpc("vpc-123") is not None
-        assert topology.vpc("vpc-123").vpc_id == "vpc-123"
+        vpc = topology.vpc("vpc-123")
+        assert vpc is not None
+        assert vpc.vpc_id == "vpc-123"
 
     def test_vpc_lookup_returns_none_when_not_found(self) -> None:
         topology = NetworkTopology(vpcs=[VpcMetadata(vpc_id="vpc-123")])
@@ -383,8 +384,9 @@ class TestTopologyAccessors:
         topology = NetworkTopology(
             subnets=[SubnetMetadata(subnet_id="subnet-abc", vpc_id="vpc-123")]
         )
-        assert topology.subnet("subnet-abc") is not None
-        assert topology.subnet("subnet-abc").subnet_id == "subnet-abc"
+        subnet = topology.subnet("subnet-abc")
+        assert subnet is not None
+        assert subnet.subnet_id == "subnet-abc"
 
     def test_subnet_lookup_returns_none_when_not_found(self) -> None:
         topology = NetworkTopology(subnets=[SubnetMetadata(subnet_id="subnet-abc")])
@@ -425,6 +427,7 @@ class TestTopologyAccessors:
             ],
         )
         table = topology.route_table_for_subnet("subnet-abc")
+        assert table is not None
         assert table.route_table_id == "rtb-explicit"
 
     def test_route_table_for_subnet_returns_none_when_subnet_unknown(self) -> None:
@@ -455,27 +458,27 @@ class TestImmutability:
     def test_vpc_metadata_is_frozen(self) -> None:
         vpc = VpcMetadata(vpc_id="vpc-123")
         with pytest.raises(ValidationError):
-            vpc.vpc_id = "vpc-456"  # type: ignore[misc]
+            vpc.vpc_id = "vpc-456"
 
     def test_subnet_metadata_is_frozen(self) -> None:
         subnet = SubnetMetadata(subnet_id="subnet-abc")
         with pytest.raises(ValidationError):
-            subnet.subnet_id = "subnet-xyz"  # type: ignore[misc]
+            subnet.subnet_id = "subnet-xyz"
 
     def test_route_table_metadata_is_frozen(self) -> None:
         table = RouteTableMetadata(route_table_id="rtb-xyz")
         with pytest.raises(ValidationError):
-            table.route_table_id = "rtb-123"  # type: ignore[misc]
+            table.route_table_id = "rtb-123"
 
     def test_route_is_frozen(self) -> None:
         route = Route(destination_cidr_block="0.0.0.0/0")
         with pytest.raises(ValidationError):
-            route.destination_cidr_block = "10.0.0.0/8"  # type: ignore[misc]
+            route.destination_cidr_block = "10.0.0.0/8"
 
     def test_network_topology_is_frozen(self) -> None:
         topology = NetworkTopology()
         with pytest.raises(ValidationError):
-            topology.vpcs = []  # type: ignore[misc]
+            topology.vpcs = []
 
 
 # ---------------------------------------------------------------------------

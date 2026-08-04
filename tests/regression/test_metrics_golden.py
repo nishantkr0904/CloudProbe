@@ -48,7 +48,7 @@ class _RecordingCloudWatch:
 
 @pytest.mark.regression
 class TestMetricDatumShape:
-    def test_full_metric_datum_is_frozen(self, update_goldens) -> None:
+    def test_full_metric_datum_is_frozen(self, update_goldens: bool) -> None:
         metric = Metric(
             name="ProbeLatencyMs",
             value=12.5,
@@ -62,7 +62,7 @@ class TestMetricDatumShape:
             update=update_goldens,
         )
 
-    def test_bare_metric_datum_is_frozen(self, update_goldens) -> None:
+    def test_bare_metric_datum_is_frozen(self, update_goldens: bool) -> None:
         # No dimensions and no timestamp: the datum must omit those keys, and
         # ``unit`` must default to the CloudWatch-valid "None".
         metric = Metric(name="ProbeAvailability", value=1.0)

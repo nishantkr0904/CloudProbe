@@ -30,20 +30,23 @@ from __future__ import annotations
 
 import pytest
 
+from cloudprobe.reporting import Report
 from cloudprobe.reporting.renderers import render_html
 from tests.regression.golden import assert_against_golden
 
 
 @pytest.mark.regression
 class TestReportAggregate:
-    def test_report_aggregate_shape_is_frozen(self, frozen_report, update_goldens) -> None:
+    def test_report_aggregate_shape_is_frozen(
+        self, frozen_report: Report, update_goldens: bool
+    ) -> None:
         assert_against_golden(
             frozen_report,
             "report.json",
             update=update_goldens,
         )
 
-    def test_latency_and_breach_summary_are_present(self, frozen_report) -> None:
+    def test_latency_and_breach_summary_are_present(self, frozen_report: Report) -> None:
         # Behavioural guard on the fixture's premise: the frozen report must
         # exercise the latency and breach sections, or the golden would be
         # testing an empty page.  A slow success (250ms > 100ms threshold)
@@ -56,14 +59,14 @@ class TestReportAggregate:
 
 @pytest.mark.regression
 class TestReportHtml:
-    def test_html_document_is_frozen(self, frozen_report, update_goldens) -> None:
+    def test_html_document_is_frozen(self, frozen_report: Report, update_goldens: bool) -> None:
         assert_against_golden(
             render_html(frozen_report),
             "report.html",
             update=update_goldens,
         )
 
-    def test_html_is_a_self_contained_document(self, frozen_report) -> None:
+    def test_html_is_a_self_contained_document(self, frozen_report: Report) -> None:
         # The document must be complete and self-contained (architecture §9.2):
         # a doctype, a single root element, inlined styles and no external
         # asset references, so it opens with no network.
@@ -76,7 +79,7 @@ class TestReportHtml:
         assert "href=" not in document
         assert "src=" not in document
 
-    def test_html_escapes_untrusted_values(self, frozen_report) -> None:
+    def test_html_escapes_untrusted_values(self, frozen_report: Report) -> None:
         # Every configuration- or probe-derived value reaches the page escaped,
         # so a hostname or error string can never inject markup.
         document = render_html(frozen_report)

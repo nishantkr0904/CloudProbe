@@ -16,10 +16,12 @@ unmodified.
 from __future__ import annotations
 
 import socket
+from pathlib import Path
 
 import pytest
 
 from cloudprobe.config import load
+from cloudprobe.config.models import CloudProbeConfig
 from cloudprobe.probes import ProbeErrorClass, TcpProbe
 
 _CONFIG = """\
@@ -54,7 +56,7 @@ class _FakeConnection:
 
 
 @pytest.fixture
-def config(tmp_path):
+def config(tmp_path: Path) -> CloudProbeConfig:
     config_file = tmp_path / "config.yaml"
     config_file.write_text(_CONFIG, encoding="utf-8")
     return load(str(config_file))
@@ -62,7 +64,9 @@ def config(tmp_path):
 
 @pytest.mark.integration
 class TestConfigToProbe:
-    def test_a_reachable_target_yields_a_successful_result(self, config, monkeypatch) -> None:
+    def test_a_reachable_target_yields_a_successful_result(
+        self, config: CloudProbeConfig, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         dialled: list[tuple[tuple[str, int], float]] = []
 
         def fake_create_connection(address, timeout=None, **kwargs):
@@ -79,7 +83,9 @@ class TestConfigToProbe:
         # The address and timeout came from the loaded configuration.
         assert dialled == [(("10.20.1.10", 443), 3)]
 
-    def test_a_refused_target_is_classified_as_refused(self, config, monkeypatch) -> None:
+    def test_a_refused_target_is_classified_as_refused(
+        self, config: CloudProbeConfig, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         def refuse(address, timeout=None, **kwargs):
             raise ConnectionRefusedError("connection refused")
 
@@ -90,7 +96,9 @@ class TestConfigToProbe:
         assert result.success is False
         assert result.error_class is ProbeErrorClass.REFUSED
 
-    def test_a_timing_out_target_is_classified_as_timeout(self, config, monkeypatch) -> None:
+    def test_a_timing_out_target_is_classified_as_timeout(
+        self, config: CloudProbeConfig, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         def time_out(address, timeout=None, **kwargs):
             raise TimeoutError("timed out")
 

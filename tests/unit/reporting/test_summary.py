@@ -18,6 +18,7 @@ Covers summary.py:
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 import pytest
 
@@ -36,8 +37,8 @@ from cloudprobe.reporting.summary import (
 _TS = datetime(2026, 8, 3, 6, 0, 0)
 
 
-def _target(target_id: str = "web-1", **overrides) -> Target:
-    base = {
+def _target(target_id: str = "web-1", **overrides: Any) -> Target:
+    base: dict[str, Any] = {
         "target_id": target_id,
         "host": "10.20.1.10",
         "port": 443,
@@ -49,8 +50,8 @@ def _target(target_id: str = "web-1", **overrides) -> Target:
     return Target(**base)
 
 
-def _result(**overrides) -> ProbeResult:
-    base = {
+def _result(**overrides: Any) -> ProbeResult:
+    base: dict[str, Any] = {
         "target": _target(),
         "probe_type": ProbeType.TCP,
         "success": True,
@@ -61,8 +62,8 @@ def _result(**overrides) -> ProbeResult:
     return ProbeResult(**base)
 
 
-def _alert(**overrides) -> Alert:
-    base = {
+def _alert(**overrides: Any) -> Alert:
+    base: dict[str, Any] = {
         "rule_id": "rule-1",
         "target": _target(),
         "probe_type": ProbeType.TCP,
