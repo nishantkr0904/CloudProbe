@@ -18,7 +18,7 @@ explicit clock reading, so the test does not depend on wall-clock time
 from __future__ import annotations
 
 import socket
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -86,13 +86,14 @@ class TestSchedulerToReporting:
         # Every scheduled job ran, and the action collected one result.
         assert summary.succeeded is True
         assert [outcome.probe_type for outcome in summary.outcomes] == [ProbeType.TCP]
-        assert len(results) == 1 and results[0].success is True
+        assert len(results) == 1
+        assert results[0].success is True
 
         metadata = build_metadata(
             run_id="run-1",
             mode=RunMode.ONESHOT,
-            started_at=datetime(2026, 8, 3, 6, 0, 0, tzinfo=timezone.utc),
-            completed_at=datetime(2026, 8, 3, 6, 0, 1, tzinfo=timezone.utc),
+            started_at=datetime(2026, 8, 3, 6, 0, 0, tzinfo=UTC),
+            completed_at=datetime(2026, 8, 3, 6, 0, 1, tzinfo=UTC),
             hostname="test-host",
         )
         report = assemble(metadata, results, [])
@@ -101,4 +102,5 @@ class TestSchedulerToReporting:
         assert report.metadata.mode is RunMode.ONESHOT
         assert report.outcomes.total == 1
         assert report.outcomes.successes == 1
-        assert report.latency is not None and report.latency.count == 1
+        assert report.latency is not None
+        assert report.latency.count == 1

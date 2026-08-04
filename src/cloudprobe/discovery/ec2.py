@@ -39,8 +39,9 @@ _NAME_TAG = "Name"
 class _Paginator(Protocol):
     """The subset of a Boto3 paginator this module uses."""
 
-    def paginate(self, **kwargs: Any) -> Iterator[Mapping[str, Any]]:
-        ...  # pragma: no cover - structural type declaration
+    def paginate(
+        self, **kwargs: Any
+    ) -> Iterator[Mapping[str, Any]]: ...  # pragma: no cover - structural type declaration
 
 
 class EC2Client(Protocol):
@@ -51,8 +52,9 @@ class EC2Client(Protocol):
     SDK present.  A real ``boto3.client("ec2")`` satisfies it.
     """
 
-    def get_paginator(self, operation_name: str) -> _Paginator:
-        ...  # pragma: no cover - structural type declaration
+    def get_paginator(
+        self, operation_name: str
+    ) -> _Paginator: ...  # pragma: no cover - structural type declaration
 
 
 def discover_ec2_targets(

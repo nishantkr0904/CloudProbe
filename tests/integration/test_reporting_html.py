@@ -15,8 +15,9 @@ explicit so nothing depends on wall-clock time (architecture §10.3).
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from html.parser import HTMLParser
+from typing import ClassVar
 
 import pytest
 
@@ -29,13 +30,13 @@ from cloudprobe.reporting.renderers import render_html
 _WEB = Target(target_id="web-1", host="10.20.1.10", port=443, probe_types=[ProbeType.TCP])
 _API = Target(target_id="api-1", host="10.20.2.20", port=8080, probe_types=[ProbeType.TCP])
 
-_WHEN = datetime(2026, 8, 3, 6, 0, 0, tzinfo=timezone.utc)
+_WHEN = datetime(2026, 8, 3, 6, 0, 0, tzinfo=UTC)
 
 
 class _TagBalanceChecker(HTMLParser):
     """Assert every non-void element is closed, and closes nest correctly."""
 
-    _VOID = {"meta", "br", "hr", "img", "input", "link"}
+    _VOID: ClassVar[set[str]] = {"meta", "br", "hr", "img", "input", "link"}
 
     def __init__(self) -> None:
         super().__init__()
@@ -46,7 +47,8 @@ class _TagBalanceChecker(HTMLParser):
             self._stack.append(tag)
 
     def handle_endtag(self, tag: str) -> None:
-        assert self._stack and self._stack[-1] == tag, f"unbalanced </{tag}>"
+        assert self._stack, f"unbalanced </{tag}>"
+        assert self._stack[-1] == tag, f"unbalanced </{tag}>"
         self._stack.pop()
 
     def assert_balanced(self) -> None:
@@ -97,7 +99,7 @@ def _report():
         run_id="run-20260803",
         mode=RunMode.ONESHOT,
         started_at=_WHEN,
-        completed_at=datetime(2026, 8, 3, 6, 0, 2, tzinfo=timezone.utc),
+        completed_at=datetime(2026, 8, 3, 6, 0, 2, tzinfo=UTC),
         hostname="ops-laptop",
     )
     return assemble(metadata, results, alerts)
@@ -121,5 +123,6 @@ class TestReportingToHtml:
         # so the renderer walked the report the assembler actually produced.
         assert "run-20260803" in html
         assert "ops-laptop" in html
-        assert "web-1" in html and "api-1" in html
+        assert "web-1" in html
+        assert "api-1" in html
         assert "high-latency" in html

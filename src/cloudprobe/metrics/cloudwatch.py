@@ -58,8 +58,9 @@ class CloudWatchClient(Protocol):
     importing Boto3.  A real ``boto3.client("cloudwatch")`` satisfies it.
     """
 
-    def put_metric_data(self, **kwargs: Any) -> Any:
-        ...  # pragma: no cover - structural type declaration
+    def put_metric_data(
+        self, **kwargs: Any
+    ) -> Any: ...  # pragma: no cover - structural type declaration
 
 
 @dataclass(frozen=True)

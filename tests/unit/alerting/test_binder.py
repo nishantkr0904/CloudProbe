@@ -19,7 +19,7 @@ Covers:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -29,7 +29,6 @@ from cloudprobe.alerting import (
     AlarmPublishError,
     Alert,
     AlertingError,
-    CloudWatchAlarmClient,
     CloudWatchAlarmPublisher,
     ComparisonOperator,
     InvalidAlarmError,
@@ -37,7 +36,7 @@ from cloudprobe.alerting import (
 )
 from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType, Target
 
-_MOMENT = datetime(2026, 8, 2, 12, 0, tzinfo=timezone.utc)
+_MOMENT = datetime(2026, 8, 2, 12, 0, tzinfo=UTC)
 _NAMESPACE = "CloudProbe/Network"
 
 

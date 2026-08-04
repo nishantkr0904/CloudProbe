@@ -22,7 +22,6 @@ import pytest
 from cloudprobe.config.models import ProbeType, Target
 from cloudprobe.discovery.ec2 import discover_ec2_targets
 
-
 # ---------------------------------------------------------------------------
 # Fakes
 # ---------------------------------------------------------------------------

@@ -17,9 +17,8 @@ Those concerns live in other layers or later commits.
 
 from __future__ import annotations
 
-import socket
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 import paramiko
 
@@ -95,7 +94,7 @@ class SSHExecutor:
         self._client_factory = client_factory
         self._client: paramiko.SSHClient | None = None
 
-    def __enter__(self) -> "SSHExecutor":
+    def __enter__(self) -> SSHExecutor:
         self.connect()
         return self
 
@@ -123,7 +122,7 @@ class SSHExecutor:
         except paramiko.AuthenticationException as exc:
             client.close()
             raise SSHAuthenticationError(str(exc)) from exc
-        except (socket.timeout, TimeoutError) as exc:
+        except TimeoutError as exc:
             client.close()
             raise SSHTimeoutError(str(exc)) from exc
         except (paramiko.SSHException, OSError) as exc:
@@ -144,7 +143,7 @@ class SSHExecutor:
             exit_status = stdout.channel.recv_exit_status()
             out = stdout.read().decode("utf-8", errors="replace")
             err = stderr.read().decode("utf-8", errors="replace")
-        except (socket.timeout, TimeoutError) as exc:
+        except TimeoutError as exc:
             raise SSHTimeoutError(str(exc)) from exc
         except paramiko.SSHException as exc:
             raise SSHCommandError(str(exc)) from exc

@@ -13,7 +13,7 @@ requires no credentials or network.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import boto3
 import pytest
@@ -43,7 +43,7 @@ def _result(latency_ms: float) -> ProbeResult:
         probe_type=ProbeType.TCP,
         success=True,
         latency_ms=latency_ms,
-        timestamp=datetime(2026, 8, 3, 6, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 8, 3, 6, 0, 0, tzinfo=UTC),
     )
 
 
@@ -68,7 +68,8 @@ class TestAlertsToCloudWatchAlarms:
             publisher = CloudWatchAlarmPublisher(client, namespace="CloudProbe/Test")
 
             alerts = AlertManager().evaluate(_result(latency_ms=250.0), [_rule(100.0)])
-            assert len(alerts) == 1 and alerts[0].breached is True
+            assert len(alerts) == 1
+            assert alerts[0].breached is True
 
             definition = publisher.publish(alerts[0])
 
@@ -113,7 +114,8 @@ class TestAlertsToCloudWatchAlarms:
 
             clear = AlertManager().evaluate(_result(latency_ms=50.0), [_rule(100.0)])[0]
             breach = AlertManager().evaluate(_result(latency_ms=250.0), [_rule(100.0)])[0]
-            assert clear.breached is False and breach.breached is True
+            assert clear.breached is False
+            assert breach.breached is True
 
             definition = publisher.publish(clear)
 

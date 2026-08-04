@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import errno
 import socket
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from time import perf_counter
 
 from cloudprobe.config.models import ProbeType, Target
@@ -136,7 +136,7 @@ class UdpProbe:
             probe_type=ProbeType.UDP,
             success=success,
             latency_ms=(perf_counter() - start) * 1000.0,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             error_class=error,
             raw=raw,
         )

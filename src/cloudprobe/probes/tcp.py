@@ -16,7 +16,7 @@ and reporting live in other layers.
 from __future__ import annotations
 
 import socket
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from time import perf_counter
 
 from cloudprobe.config.models import ProbeType, Target
@@ -72,7 +72,7 @@ class TcpProbe:
             probe_type=ProbeType.TCP,
             success=success,
             latency_ms=(perf_counter() - start) * 1000.0,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             error_class=error,
             raw=str(exc) if exc is not None else None,
         )

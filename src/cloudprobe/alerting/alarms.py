@@ -57,8 +57,9 @@ class CloudWatchAlarmClient(Protocol):
     importing Boto3.  A real ``boto3.client("cloudwatch")`` satisfies it.
     """
 
-    def put_metric_alarm(self, **kwargs: Any) -> Any:
-        ...  # pragma: no cover - structural type declaration
+    def put_metric_alarm(
+        self, **kwargs: Any
+    ) -> Any: ...  # pragma: no cover - structural type declaration
 
 
 @dataclass(frozen=True)
@@ -90,8 +91,7 @@ class AlarmDefinition:
             raise InvalidAlarmError("alarm name must be a non-empty string")
         if not math.isfinite(self.threshold):
             raise InvalidAlarmError(
-                f"alarm {self.alarm_name!r} threshold must be finite, "
-                f"got {self.threshold!r}"
+                f"alarm {self.alarm_name!r} threshold must be finite, " f"got {self.threshold!r}"
             )
         if self.comparison_operator not in CLOUDWATCH_COMPARISON_OPERATORS:
             raise InvalidAlarmError(
@@ -100,13 +100,11 @@ class AlarmDefinition:
             )
         if self.statistic not in _CLOUDWATCH_STATISTICS:
             raise InvalidAlarmError(
-                f"alarm {self.alarm_name!r} uses unsupported statistic "
-                f"{self.statistic!r}"
+                f"alarm {self.alarm_name!r} uses unsupported statistic " f"{self.statistic!r}"
             )
         if self.period_seconds <= 0 or self.evaluation_periods <= 0:
             raise InvalidAlarmError(
-                f"alarm {self.alarm_name!r} period and evaluation periods must be "
-                "positive"
+                f"alarm {self.alarm_name!r} period and evaluation periods must be " "positive"
             )
         if self.treat_missing_data not in _TREAT_MISSING_DATA_VALUES:
             raise InvalidAlarmError(
@@ -126,9 +124,7 @@ class AlarmDefinition:
             "MetricName": self.metric_name,
             "Namespace": self.namespace,
             "Statistic": self.statistic,
-            "Dimensions": [
-                {"Name": key, "Value": value} for key, value in self.dimensions.items()
-            ],
+            "Dimensions": [{"Name": key, "Value": value} for key, value in self.dimensions.items()],
             "Period": self.period_seconds,
             "EvaluationPeriods": self.evaluation_periods,
             "Threshold": self.threshold,

@@ -19,7 +19,7 @@ Covers:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -31,13 +31,13 @@ from cloudprobe.alerting import (
     InvalidNotificationError,
     MetricKind,
     NotificationPublishError,
-    SNSNotificationPublisher,
     SnsNotification,
+    SNSNotificationPublisher,
 )
 from cloudprobe.alerting.notifications import default_message, default_subject
 from cloudprobe.config.models import AlertSeverity, ProbeType, Target
 
-_MOMENT = datetime(2026, 8, 2, 12, 0, tzinfo=timezone.utc)
+_MOMENT = datetime(2026, 8, 2, 12, 0, tzinfo=UTC)
 _TOPIC_ARN = "arn:aws:sns:us-east-1:123456789012:cloudprobe-alerts"
 
 
@@ -98,9 +98,7 @@ def _publisher(client: _FakeSnsClient, **overrides: Any) -> SNSNotificationPubli
 @pytest.mark.unit
 class TestTranslate:
     def test_alert_translates_to_a_complete_notification(self) -> None:
-        notification = SNSNotificationPublisher(_FakeSnsClient(), _TOPIC_ARN).translate(
-            _alert()
-        )
+        notification = SNSNotificationPublisher(_FakeSnsClient(), _TOPIC_ARN).translate(_alert())
         assert isinstance(notification, SnsNotification)
         assert notification.topic_arn == _TOPIC_ARN
         assert notification.subject == "CloudProbe WARNING: tcp-latency on web-1"
@@ -108,9 +106,9 @@ class TestTranslate:
         assert "web-1" in notification.message
 
     def test_payload_has_the_publish_shape(self) -> None:
-        payload = SNSNotificationPublisher(_FakeSnsClient(), _TOPIC_ARN).translate(
-            _alert()
-        ).to_payload()
+        payload = (
+            SNSNotificationPublisher(_FakeSnsClient(), _TOPIC_ARN).translate(_alert()).to_payload()
+        )
         assert payload["TopicArn"] == _TOPIC_ARN
         assert payload["Subject"] == "CloudProbe WARNING: tcp-latency on web-1"
         assert "tcp-latency" in payload["Message"]

@@ -52,14 +52,15 @@ class Scheduler(Protocol):
     rather than a concrete class.  A real ``BackgroundScheduler`` satisfies it.
     """
 
-    def add_job(self, func: Callable[[], None], trigger: Any, **kwargs: Any) -> Any:
-        ...  # pragma: no cover - structural type declaration
+    def add_job(
+        self, func: Callable[[], None], trigger: Any, **kwargs: Any
+    ) -> Any: ...  # pragma: no cover - structural type declaration
 
-    def start(self) -> None:
-        ...  # pragma: no cover - structural type declaration
+    def start(self) -> None: ...  # pragma: no cover - structural type declaration
 
-    def shutdown(self, wait: bool = True) -> None:
-        ...  # pragma: no cover - structural type declaration
+    def shutdown(
+        self, wait: bool = True
+    ) -> None: ...  # pragma: no cover - structural type declaration
 
 
 def build_trigger(cron_expression: str) -> CronTrigger:
@@ -100,7 +101,7 @@ class CronScheduler:
         config: CloudProbeConfig,
         action: JobAction,
         scheduler: Scheduler | None = None,
-    ) -> "CronScheduler":
+    ) -> CronScheduler:
         """Build a scheduler for every schedule declared in ``config``."""
         return cls(build_jobs(config, action), scheduler)
 

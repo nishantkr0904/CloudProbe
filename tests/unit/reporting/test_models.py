@@ -22,6 +22,7 @@ Covers models.py:
 
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError
 from datetime import datetime, timedelta
 
 import pytest
@@ -46,7 +47,6 @@ from cloudprobe.reporting.models import (
     OutcomeStats,
     Report,
 )
-from dataclasses import FrozenInstanceError
 
 _START = datetime(2026, 8, 3, 6, 0, 0)
 _END = datetime(2026, 8, 3, 6, 0, 12)
@@ -246,7 +246,8 @@ class TestReport:
         assert report.outcomes.total == 1
         assert report.outcomes_by_probe_type[ProbeType.TCP].successes == 1
         assert report.outcomes_by_target["web-1"].failures == 0
-        assert report.latency is not None and report.latency.mean == 12.5
+        assert report.latency is not None
+        assert report.latency.mean == 12.5
         assert report.alerts.breached == 1
         assert report.results == (result,)
         assert report.breaches == (breach,)

@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import errno
 import socket
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -134,9 +134,7 @@ class TestSuccess:
         _patch_socket(monkeypatch, _FakeSocket(response=b""))
         assert UdpProbe(timeout_seconds=5).run(_target()).success is True
 
-    def test_result_carries_target_and_probe_type(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_result_carries_target_and_probe_type(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_socket(monkeypatch, _FakeSocket())
         target = _target()
         result = UdpProbe(timeout_seconds=5).run(target)
@@ -147,7 +145,7 @@ class TestSuccess:
         _patch_socket(monkeypatch, _FakeSocket())
         result = UdpProbe(timeout_seconds=5).run(_target())
         assert isinstance(result.timestamp, datetime)
-        assert result.timestamp.tzinfo is timezone.utc
+        assert result.timestamp.tzinfo is UTC
 
 
 # ---------------------------------------------------------------------------
@@ -162,9 +160,7 @@ class TestReplyValidation:
         probe = UdpProbe(timeout_seconds=5, expected=b"\x12\x34")
         assert probe.run(_target()).success is True
 
-    def test_expected_bytes_absent_is_protocol_error(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_expected_bytes_absent_is_protocol_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_socket(monkeypatch, _FakeSocket(response=b"garbage"))
         result = UdpProbe(timeout_seconds=5, expected=b"\x12\x34").run(_target())
         assert result.success is False
@@ -236,17 +232,13 @@ class TestFailureClassification:
         result = UdpProbe(timeout_seconds=1).run(_target())
         assert result.error_class is ProbeErrorClass.SOCKET_ERROR
 
-    def test_refused_not_collapsed_into_socket_error(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_refused_not_collapsed_into_socket_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # ConnectionRefusedError is an OSError subclass; the specific class wins.
         _patch_socket(monkeypatch, _FakeSocket(recv_error=ConnectionRefusedError()))
         result = UdpProbe(timeout_seconds=1).run(_target())
         assert result.error_class is ProbeErrorClass.REFUSED
 
-    def test_every_failure_still_returns_a_result(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_every_failure_still_returns_a_result(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_socket(monkeypatch, _FakeSocket(recv_error=OSError()))
         assert isinstance(UdpProbe(timeout_seconds=1).run(_target()), ProbeResult)
 
@@ -304,9 +296,7 @@ class TestLatencyAndForwarding:
         assert factory.family == socket.AF_INET
         assert factory.kind == socket.SOCK_DGRAM
 
-    def test_receive_buffer_fits_a_full_datagram(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_receive_buffer_fits_a_full_datagram(self, monkeypatch: pytest.MonkeyPatch) -> None:
         sock = _FakeSocket()
         _patch_socket(monkeypatch, sock)
         UdpProbe(timeout_seconds=5).run(_target())

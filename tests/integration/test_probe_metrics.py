@@ -13,7 +13,7 @@ no credentials and no network are required.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import boto3
 import pytest
@@ -67,7 +67,7 @@ def _result(success: bool, latency_ms: float) -> ProbeResult:
         probe_type=ProbeType.TCP,
         success=success,
         latency_ms=latency_ms,
-        timestamp=datetime(2026, 8, 3, 6, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 8, 3, 6, 0, 0, tzinfo=UTC),
         error_class=None if success else ProbeErrorClass.TIMEOUT,
     )
 

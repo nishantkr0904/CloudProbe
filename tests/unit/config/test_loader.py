@@ -83,9 +83,7 @@ class TestLoadDirectory:
             "    port: 22\n"
             "    probe_types: [tcp]\n"
         )
-        (tmp_path / "thresholds.yaml").write_text(
-            "thresholds:\n  - probe_type: tcp\n"
-        )
+        (tmp_path / "thresholds.yaml").write_text("thresholds:\n  - probe_type: tcp\n")
         (tmp_path / "schedules.yaml").write_text(
             "schedules:\n  - probe_type: tcp\n    cron_expression: '*/1 * * * *'\n"
         )

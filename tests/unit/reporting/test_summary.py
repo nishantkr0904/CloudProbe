@@ -237,9 +237,7 @@ class TestSummarizeInventory:
         assert summary.subnet_count == 2
 
     def test_optional_vpc_and_subnet_are_skipped_when_absent(self) -> None:
-        summary = summarize_inventory(
-            [_target("web-1", vpc_id=None, subnet_id=None)]
-        )
+        summary = summarize_inventory([_target("web-1", vpc_id=None, subnet_id=None)])
         assert summary.target_count == 1
         assert summary.vpc_count == 0
         assert summary.subnet_count == 0

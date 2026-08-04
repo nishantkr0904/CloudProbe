@@ -27,7 +27,6 @@ from cloudprobe.config.models import (
     Threshold,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -242,9 +241,7 @@ class TestDuplicates:
             Target.model_validate(_valid_target(probe_types=["tcp", "tcp"]))
 
     def test_distinct_target_ids_pass(self) -> None:
-        cfg = _valid_config(
-            targets=[_valid_target(target_id="a"), _valid_target(target_id="b")]
-        )
+        cfg = _valid_config(targets=[_valid_target(target_id="a"), _valid_target(target_id="b")])
         CloudProbeConfig.model_validate(cfg)
 
 
@@ -258,10 +255,10 @@ class TestInvalidSchedule:
     @pytest.mark.parametrize(
         "expr",
         [
-            "* * * *",           # 4 fields
-            "* * * * * *",       # 6 fields
-            "everyminute",       # single token
-            "",                  # empty
+            "* * * *",  # 4 fields
+            "* * * * * *",  # 6 fields
+            "everyminute",  # single token
+            "",  # empty
         ],
     )
     def test_bad_cron_expression_rejected(self, expr: str) -> None:
@@ -309,22 +306,16 @@ class TestInvalidThreshold:
     @pytest.mark.parametrize("bad_latency", [0, -1, -1000])
     def test_bad_latency_rejected(self, bad_latency: int) -> None:
         with pytest.raises(ValidationError):
-            Threshold.model_validate(
-                {"probe_type": "tcp", "max_latency_ms": bad_latency}
-            )
+            Threshold.model_validate({"probe_type": "tcp", "max_latency_ms": bad_latency})
 
     @pytest.mark.parametrize("bad_ratio", [-0.1, 1.01, 2.0])
     def test_bad_success_ratio_rejected(self, bad_ratio: float) -> None:
         with pytest.raises(ValidationError):
-            Threshold.model_validate(
-                {"probe_type": "tcp", "min_success_ratio": bad_ratio}
-            )
+            Threshold.model_validate({"probe_type": "tcp", "min_success_ratio": bad_ratio})
 
     def test_zero_consecutive_failures_rejected(self) -> None:
         with pytest.raises(ValidationError):
-            Threshold.model_validate(
-                {"probe_type": "tcp", "consecutive_failures": 0}
-            )
+            Threshold.model_validate({"probe_type": "tcp", "consecutive_failures": 0})
 
     def test_missing_threshold_for_referenced_probe_type_rejected(self) -> None:
         cfg = _valid_config(
@@ -337,9 +328,7 @@ class TestInvalidThreshold:
 
     def test_unknown_probe_type_rejected(self) -> None:
         with pytest.raises(ValidationError):
-            Threshold.model_validate(
-                {"probe_type": "quic", "max_latency_ms": 100}
-            )
+            Threshold.model_validate({"probe_type": "quic", "max_latency_ms": 100})
 
 
 # ---------------------------------------------------------------------------

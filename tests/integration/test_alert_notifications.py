@@ -13,7 +13,7 @@ in memory and requires no credentials or network.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import boto3
 import pytest
@@ -44,7 +44,7 @@ def _failed_result() -> ProbeResult:
         probe_type=ProbeType.TCP,
         success=False,
         latency_ms=0.0,
-        timestamp=datetime(2026, 8, 3, 6, 0, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2026, 8, 3, 6, 0, 0, tzinfo=UTC),
         error_class=ProbeErrorClass.TIMEOUT,
     )
 
@@ -71,7 +71,8 @@ class TestAlertsToSnsNotifications:
             publisher = SNSNotificationPublisher(client, topic_arn)
 
             alerts = AlertManager().evaluate(_failed_result(), [_availability_rule()])
-            assert len(alerts) == 1 and alerts[0].breached is True
+            assert len(alerts) == 1
+            assert alerts[0].breached is True
 
             notification = publisher.publish(alerts[0])
 

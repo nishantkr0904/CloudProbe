@@ -16,7 +16,6 @@ Covers:
 
 from __future__ import annotations
 
-import socket
 from typing import Any
 
 import paramiko
@@ -168,7 +167,7 @@ class TestFailureTranslation:
             _executor(client).connect()
 
     def test_connection_timeout_is_translated(self) -> None:
-        client = _FakeClient(connect_error=socket.timeout("timed out"))
+        client = _FakeClient(connect_error=TimeoutError("timed out"))
         with pytest.raises(SSHTimeoutError):
             _executor(client).connect()
 
@@ -201,7 +200,7 @@ class TestFailureTranslation:
             ssh.execute("uptime")
 
     def test_command_timeout_is_translated(self) -> None:
-        client = _FakeClient(exec_error=socket.timeout("timed out"))
+        client = _FakeClient(exec_error=TimeoutError("timed out"))
         ssh = _executor(client)
         ssh.connect()
         with pytest.raises(SSHTimeoutError):
@@ -221,9 +220,7 @@ class TestFailureTranslation:
 class TestParameterForwarding:
     def test_connection_parameters_are_forwarded(self) -> None:
         client = _FakeClient()
-        _executor(
-            client, host="host.example", port=2222, username="admin"
-        ).connect()
+        _executor(client, host="host.example", port=2222, username="admin").connect()
         assert client.connect_kwargs["hostname"] == "host.example"
         assert client.connect_kwargs["port"] == 2222
         assert client.connect_kwargs["username"] == "admin"
@@ -288,7 +285,6 @@ class TestResourceCleanup:
 
     def test_context_manager_closes_even_when_command_raises(self) -> None:
         client = _FakeClient(exec_error=paramiko.SSHException("dispatch failed"))
-        with pytest.raises(SSHCommandError):
-            with _executor(client) as ssh:
-                ssh.execute("uptime")
+        with pytest.raises(SSHCommandError), _executor(client) as ssh:
+            ssh.execute("uptime")
         assert client.close_count == 1

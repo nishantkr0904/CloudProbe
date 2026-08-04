@@ -17,7 +17,6 @@ from cloudprobe.config.models import ProbeType, Target
 from cloudprobe.discovery.inventory import build_inventory
 from cloudprobe.discovery.models import InventorySource, SourceFailure
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------

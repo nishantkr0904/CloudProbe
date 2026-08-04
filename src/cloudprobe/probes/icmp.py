@@ -23,7 +23,7 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from cloudprobe.config.models import ProbeType, Target
 from cloudprobe.probes.base import ProbeErrorClass, ProbeResult
@@ -76,7 +76,8 @@ class IcmpProbe:
         """
         command = self._build_command(target.host)
         try:
-            completed = subprocess.run(
+            # S603: argument list, never a shell; host comes from validated config.
+            completed = subprocess.run(  # noqa: S603
                 command,
                 capture_output=True,
                 text=True,
@@ -151,7 +152,7 @@ class IcmpProbe:
             probe_type=ProbeType.ICMP,
             success=success,
             latency_ms=latency_ms,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             error_class=error,
             raw=raw,
         )

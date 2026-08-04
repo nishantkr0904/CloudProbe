@@ -53,9 +53,7 @@ def validate_thresholds_cover_probe_types(
         raise ValueError(f"missing threshold(s) for probe type(s): {names}")
 
 
-def validate_schedules_cover_probe_types(
-    targets: list[Target], schedules: list[Schedule]
-) -> None:
+def validate_schedules_cover_probe_types(targets: list[Target], schedules: list[Schedule]) -> None:
     """Every probe type used by any target must have a matching Schedule.
 
     Without this, a target would be declared but never executed.

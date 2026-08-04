@@ -15,7 +15,7 @@ Covers:
 from __future__ import annotations
 
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -106,9 +106,7 @@ class TestSuccess:
         assert result.success is True
         assert result.error_class is None
 
-    def test_result_carries_target_and_probe_type(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_result_carries_target_and_probe_type(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_run(monkeypatch, _RecordingRun(stdout=_LINUX_SUCCESS))
         target = _target()
         result = IcmpProbe(timeout_seconds=5).run(target)
@@ -119,7 +117,7 @@ class TestSuccess:
         _patch_run(monkeypatch, _RecordingRun(stdout=_LINUX_SUCCESS))
         result = IcmpProbe(timeout_seconds=5).run(_target())
         assert isinstance(result.timestamp, datetime)
-        assert result.timestamp.tzinfo is timezone.utc
+        assert result.timestamp.tzinfo is UTC
 
     def test_no_port_required(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # ICMP has no port concept; a portless target must probe fine.
@@ -152,9 +150,7 @@ class TestLatencyExtraction:
         _patch_run(monkeypatch, _RecordingRun(stdout=output))
         assert IcmpProbe(timeout_seconds=5).run(_target()).latency_ms == 1.0
 
-    def test_success_without_rtt_is_a_command_error(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_success_without_rtt_is_a_command_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_run(monkeypatch, _RecordingRun(stdout="unparseable output"))
         result = IcmpProbe(timeout_seconds=5).run(_target())
         assert result.success is False
@@ -184,9 +180,7 @@ class TestFailureClassification:
         result = IcmpProbe(timeout_seconds=5).run(_target())
         assert result.error_class is ProbeErrorClass.TIMEOUT
 
-    def test_destination_unreachable_is_classified(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_destination_unreachable_is_classified(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_run(monkeypatch, _RecordingRun(stdout=_UNREACHABLE, returncode=1))
         result = IcmpProbe(timeout_seconds=5).run(_target())
         assert result.error_class is ProbeErrorClass.UNREACHABLE
@@ -208,9 +202,7 @@ class TestFailureClassification:
         result = IcmpProbe(timeout_seconds=5).run(_target())
         assert result.error_class is ProbeErrorClass.DNS_FAILURE
 
-    def test_missing_ping_binary_is_command_error(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_missing_ping_binary_is_command_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_run(monkeypatch, _RecordingRun(error=FileNotFoundError("no ping")))
         result = IcmpProbe(timeout_seconds=5).run(_target())
         assert result.error_class is ProbeErrorClass.COMMAND_ERROR
@@ -227,15 +219,11 @@ class TestFailureClassification:
         assert result.raw is not None
         assert "Unreachable" in result.raw
 
-    def test_empty_failure_output_leaves_raw_unset(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_empty_failure_output_leaves_raw_unset(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_run(monkeypatch, _RecordingRun(returncode=1))
         assert IcmpProbe(timeout_seconds=5).run(_target()).raw is None
 
-    def test_every_failure_still_returns_a_result(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_every_failure_still_returns_a_result(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_run(monkeypatch, _RecordingRun(error=OSError()))
         assert isinstance(IcmpProbe(timeout_seconds=5).run(_target()), ProbeResult)
 
@@ -255,9 +243,7 @@ class TestCommandConstruction:
         assert run.command[0] == "ping"
         assert run.command[-1] == "10.0.0.5"
 
-    def test_command_is_a_list_and_no_shell_is_used(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_command_is_a_list_and_no_shell_is_used(self, monkeypatch: pytest.MonkeyPatch) -> None:
         run = _RecordingRun(stdout=_LINUX_SUCCESS)
         _patch_run(monkeypatch, run)
         IcmpProbe(timeout_seconds=5).run(_target())
@@ -301,9 +287,7 @@ class TestCommandConstruction:
         assert run.command is not None
         assert run.command[run.command.index("-W") + 1] == "3"
 
-    def test_linux_sub_second_timeout_floors_to_one(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_linux_sub_second_timeout_floors_to_one(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # Linux ping rejects -W 0, so a sub-second budget must still send 1.
         monkeypatch.setattr("cloudprobe.probes.icmp.sys.platform", "linux")
         run = _RecordingRun(stdout=_LINUX_SUCCESS)
@@ -312,9 +296,7 @@ class TestCommandConstruction:
         assert run.command is not None
         assert run.command[run.command.index("-W") + 1] == "1"
 
-    def test_macos_per_reply_timeout_is_milliseconds(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_macos_per_reply_timeout_is_milliseconds(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr("cloudprobe.probes.icmp.sys.platform", "darwin")
         run = _RecordingRun(stdout=_LINUX_SUCCESS)
         _patch_run(monkeypatch, run)

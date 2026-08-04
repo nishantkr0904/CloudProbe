@@ -16,7 +16,7 @@ Covers:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -80,7 +80,7 @@ class TestSuccess:
 
     def test_timestamp_is_forwarded_when_set(self) -> None:
         client = _FakeCloudWatchClient()
-        moment = datetime(2026, 8, 2, tzinfo=timezone.utc)
+        moment = datetime(2026, 8, 2, tzinfo=UTC)
         CloudWatchMetricsPublisher(client).publish([Metric("M", 1.0, timestamp=moment)])
         assert client.calls[0]["MetricData"][0]["Timestamp"] == moment
 
@@ -136,9 +136,7 @@ class TestNamespaceAndDimensions:
 
     def test_custom_namespace_is_forwarded(self) -> None:
         client = _FakeCloudWatchClient()
-        CloudWatchMetricsPublisher(client, namespace="CloudProbe/Test").publish(
-            [Metric("M", 1.0)]
-        )
+        CloudWatchMetricsPublisher(client, namespace="CloudProbe/Test").publish([Metric("M", 1.0)])
         assert client.calls[0]["Namespace"] == "CloudProbe/Test"
 
     def test_dimensions_are_forwarded_as_name_value_pairs(self) -> None:

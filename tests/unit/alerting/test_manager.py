@@ -18,7 +18,7 @@ Covers:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -36,7 +36,7 @@ from cloudprobe.alerting import (
 from cloudprobe.config.models import AlertRule, AlertSeverity, ProbeType, Target
 from cloudprobe.probes.base import ProbeErrorClass, ProbeResult
 
-_MOMENT = datetime(2026, 8, 2, 12, 0, tzinfo=timezone.utc)
+_MOMENT = datetime(2026, 8, 2, 12, 0, tzinfo=UTC)
 
 
 def _target(**overrides: Any) -> Target:

@@ -63,13 +63,17 @@ def build_inventory(
     collisions: list[TargetCollision] = []
 
     for entry in candidates:
-        conflicts = [(key, claimed[key]) for key in entry.keys() if key in claimed]
+        # SIM118 is a false positive here: ``entry`` is an InventoryEntry, not a
+        # mapping.  Its ``keys()`` yields (host, port, probe_type) triples, while
+        # iterating a pydantic model yields (field_name, value) pairs.  Dropping
+        # the explicit ``.keys()`` would silently change what is de-duplicated.
+        conflicts = [(key, claimed[key]) for key in entry.keys() if key in claimed]  # noqa: SIM118
         if conflicts:
             collisions.extend(
                 _collision(key, kept=winner, dropped=entry) for key, winner in conflicts
             )
             continue
-        for key in entry.keys():
+        for key in entry.keys():  # noqa: SIM118 - see above; not a mapping
             claimed[key] = entry
         entries.append(entry)
 

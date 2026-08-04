@@ -118,9 +118,7 @@ def _config(*probe_types: ProbeType) -> CloudProbeConfig:
             )
         ],
         thresholds=[Threshold(probe_type=pt) for pt in types],
-        schedules=[
-            Schedule(probe_type=pt, cron_expression="*/1 * * * *") for pt in types
-        ],
+        schedules=[Schedule(probe_type=pt, cron_expression="*/1 * * * *") for pt in types],
     )
 
 
@@ -332,9 +330,7 @@ class TestRunJobsOnce:
         assert summary.failures == []
 
     def test_the_summary_carries_one_outcome_per_job(self) -> None:
-        summary = run_jobs_once(
-            [_job(probe_type=ProbeType.TCP), _job(probe_type=ProbeType.SSH)]
-        )
+        summary = run_jobs_once([_job(probe_type=ProbeType.TCP), _job(probe_type=ProbeType.SSH)])
         assert [outcome.probe_type for outcome in summary.outcomes] == [
             ProbeType.TCP,
             ProbeType.SSH,

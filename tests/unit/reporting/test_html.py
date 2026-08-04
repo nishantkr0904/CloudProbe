@@ -26,6 +26,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from html.parser import HTMLParser
+from typing import ClassVar
 
 import pytest
 
@@ -122,7 +123,7 @@ def _report(**overrides) -> Report:
 class _WellFormednessChecker(HTMLParser):
     """Asserts every start tag is closed, so the document parses cleanly."""
 
-    _VOID = {"meta", "br", "hr", "img", "input", "link"}
+    _VOID: ClassVar[set[str]] = {"meta", "br", "hr", "img", "input", "link"}
 
     def __init__(self) -> None:
         super().__init__()
@@ -154,22 +155,27 @@ class TestDocumentShell:
     def test_a_complete_standalone_document_is_returned(self) -> None:
         html = render_html(_report())
         assert html.startswith("<!DOCTYPE html>")
-        assert "<html" in html and "</html>" in html
-        assert "<head>" in html and "</head>" in html
-        assert "<body>" in html and "</body>" in html
+        assert "<html" in html
+        assert "</html>" in html
+        assert "<head>" in html
+        assert "</head>" in html
+        assert "<body>" in html
+        assert "</body>" in html
 
     def test_the_document_is_well_formed(self) -> None:
         assert _is_well_formed(render_html(_report()))
 
     def test_the_stylesheet_is_inlined(self) -> None:
         html = render_html(_report())
-        assert "<style>" in html and "</style>" in html
+        assert "<style>" in html
+        assert "</style>" in html
 
     def test_no_external_asset_or_script_is_referenced(self) -> None:
         html = render_html(_report())
         assert "<script" not in html
         assert "<link" not in html
-        assert "http://" not in html and "https://" not in html
+        assert "http://" not in html
+        assert "https://" not in html
 
 
 # ---------------------------------------------------------------------------
@@ -195,9 +201,7 @@ class TestSections:
         assert ">3<" in html
 
     def test_overall_outcomes_are_rendered(self) -> None:
-        html = render_html(
-            _report(outcomes=OutcomeStats(total=4, successes=3, failures=1))
-        )
+        html = render_html(_report(outcomes=OutcomeStats(total=4, successes=3, failures=1)))
         assert "Outcomes" in html
         assert "75.0%" in html
 
@@ -230,9 +234,7 @@ class TestSections:
         assert "&mdash;" in html
 
     def test_latency_statistics_are_rendered(self) -> None:
-        html = render_html(
-            _report(latency=LatencyStatistics(3, 1.0, 30.0, 12.0, 10.0, 28.0, 29.0))
-        )
+        html = render_html(_report(latency=LatencyStatistics(3, 1.0, 30.0, 12.0, 10.0, 28.0, 29.0)))
         assert "Latency" in html
         assert "30.000" in html
 
@@ -323,9 +325,7 @@ class TestBreachesTable:
 class TestEscaping:
     def test_a_malicious_target_id_is_escaped(self) -> None:
         evil = "<script>alert(1)</script>"
-        html = render_html(
-            _report(results=(_result(target=_target(target_id=evil)),))
-        )
+        html = render_html(_report(results=(_result(target=_target(target_id=evil)),)))
         assert evil not in html
         assert "&lt;script&gt;" in html
 

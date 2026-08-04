@@ -52,8 +52,7 @@ class SnsClient(Protocol):
     importing Boto3.  A real ``boto3.client("sns")`` satisfies it.
     """
 
-    def publish(self, **kwargs: Any) -> Any:
-        ...  # pragma: no cover - structural type declaration
+    def publish(self, **kwargs: Any) -> Any: ...  # pragma: no cover - structural type declaration
 
 
 # Severity appears in the subject as an uppercase label so an operator
@@ -134,8 +133,7 @@ class SnsNotification:
             raise InvalidNotificationError("notification message must be non-empty")
         if len(self.message.encode("utf-8")) > _MESSAGE_MAX_BYTES:
             raise InvalidNotificationError(
-                f"notification message exceeds the {_MESSAGE_MAX_BYTES}-byte "
-                "SNS limit"
+                f"notification message exceeds the {_MESSAGE_MAX_BYTES}-byte " "SNS limit"
             )
 
     def to_payload(self) -> dict[str, Any]:

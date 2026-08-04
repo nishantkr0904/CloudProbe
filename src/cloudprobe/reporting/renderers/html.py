@@ -125,17 +125,19 @@ def _grouped_outcome_table(heading: str, label_header: str, rows: list[str]) -> 
     return (
         f"<h3>{heading}</h3>\n<table>\n"
         f"<tr><th>{label_header}</th><th>Total</th><th>Successes</th>"
-        "<th>Failures</th><th>Success rate</th></tr>\n"
-        + body
-        + "\n</table>"
+        "<th>Failures</th><th>Success rate</th></tr>\n" + body + "\n</table>"
     )
 
 
 def _outcomes_section(report: Report) -> str:
-    overall = "<h3>Overall</h3>\n<table>\n" + (
-        "<tr><th>Total</th><th>Successes</th><th>Failures</th><th>Success rate</th></tr>\n"
-        + _row(_outcome_cells(report.outcomes))
-    ) + "\n</table>"
+    overall = (
+        "<h3>Overall</h3>\n<table>\n"
+        + (
+            "<tr><th>Total</th><th>Successes</th><th>Failures</th><th>Success rate</th></tr>\n"
+            + _row(_outcome_cells(report.outcomes))
+        )
+        + "\n</table>"
+    )
 
     by_type = _grouped_outcome_table(
         "By probe type",

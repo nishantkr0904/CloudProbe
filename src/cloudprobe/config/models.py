@@ -149,7 +149,7 @@ class Threshold(BaseModel):
     probe_type: ProbeType
     # Maximum acceptable round-trip / connect latency in milliseconds.
     max_latency_ms: _PositiveInt = 1000
-    # Minimum acceptable success ratio over the evaluation window (0.0–1.0).
+    # Minimum acceptable success ratio over the evaluation window (0.0-1.0).
     min_success_ratio: Annotated[float, Field(ge=0.0, le=1.0)] = 0.9
     # Number of consecutive failures before a breach is declared.
     consecutive_failures: _PositiveInt = 3
@@ -183,9 +183,7 @@ class Schedule(BaseModel):
     def cron_has_five_fields(cls, v: str) -> str:
         parts = v.strip().split()
         if len(parts) != 5:
-            raise ValueError(
-                f"cron_expression must have exactly 5 fields, got {len(parts)}: {v!r}"
-            )
+            raise ValueError(f"cron_expression must have exactly 5 fields, got {len(parts)}: {v!r}")
         return v
 
 
@@ -263,7 +261,7 @@ class CloudProbeConfig(BaseModel):
     probe: ProbeConfig = Field(default_factory=ProbeConfig)
 
     @model_validator(mode="after")
-    def validate_inventory(self) -> "CloudProbeConfig":
+    def validate_inventory(self) -> CloudProbeConfig:
         from cloudprobe.config.validators import (
             validate_no_duplicate_rule_ids,
             validate_no_duplicate_target_ids,

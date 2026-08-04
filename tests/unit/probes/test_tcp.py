@@ -15,7 +15,7 @@ Covers:
 from __future__ import annotations
 
 import socket
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import pytest
@@ -82,9 +82,7 @@ class TestSuccess:
         assert result.error_class is None
         assert result.raw is None
 
-    def test_result_carries_target_and_probe_type(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_result_carries_target_and_probe_type(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_connect(monkeypatch, _RecordingConnect())
         target = _target()
         result = TcpProbe(timeout_seconds=5).run(target)
@@ -95,7 +93,7 @@ class TestSuccess:
         _patch_connect(monkeypatch, _RecordingConnect())
         result = TcpProbe(timeout_seconds=5).run(_target())
         assert isinstance(result.timestamp, datetime)
-        assert result.timestamp.tzinfo is timezone.utc
+        assert result.timestamp.tzinfo is UTC
 
 
 # ---------------------------------------------------------------------------
@@ -124,26 +122,20 @@ class TestFailureClassification:
         assert result.success is False
         assert result.error_class is ProbeErrorClass.DNS_FAILURE
 
-    def test_generic_socket_error_is_classified(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_generic_socket_error_is_classified(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_connect(monkeypatch, _RecordingConnect(OSError("network unreachable")))
         result = TcpProbe(timeout_seconds=1).run(_target())
         assert result.success is False
         assert result.error_class is ProbeErrorClass.SOCKET_ERROR
 
-    def test_refused_not_collapsed_into_socket_error(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_refused_not_collapsed_into_socket_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # ConnectionRefusedError is an OSError subclass; the specific class must
         # win over the generic catch-all.
         _patch_connect(monkeypatch, _RecordingConnect(ConnectionRefusedError()))
         result = TcpProbe(timeout_seconds=1).run(_target())
         assert result.error_class is ProbeErrorClass.REFUSED
 
-    def test_every_failure_still_returns_a_result(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_every_failure_still_returns_a_result(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _patch_connect(monkeypatch, _RecordingConnect(OSError()))
         result = TcpProbe(timeout_seconds=1).run(_target())
         assert isinstance(result, ProbeResult)
@@ -173,9 +165,7 @@ class TestLatencyAndTimeout:
         TcpProbe(timeout_seconds=3.5).run(_target())
         assert connect.timeout == 3.5
 
-    def test_host_and_port_forwarded_to_socket(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_host_and_port_forwarded_to_socket(self, monkeypatch: pytest.MonkeyPatch) -> None:
         connect = _RecordingConnect()
         _patch_connect(monkeypatch, connect)
         TcpProbe(timeout_seconds=5).run(_target(host="10.0.0.5", port=22))

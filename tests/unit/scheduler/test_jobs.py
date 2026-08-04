@@ -17,6 +17,7 @@ Covers:
 
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError
 from typing import Any
 
 import pytest
@@ -176,7 +177,7 @@ class TestProbeJob:
             job.run()
 
     def test_job_is_immutable(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(FrozenInstanceError):
             _job().probe_type = ProbeType.ICMP  # type: ignore[misc]
 
 
