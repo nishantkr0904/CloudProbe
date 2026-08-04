@@ -188,6 +188,10 @@ warn_return_any       = false
 [tool.pytest.ini_options]
 minversion = "8.0"
 testpaths  = ["tests"]
+# The package lives under src/, which is not on sys.path when pytest runs from
+# the repository root. Declaring it here is what lets `make test` work straight
+# after `make bootstrap`, without an editable install of the package.
+pythonpath = ["src"]
 addopts    = [
     "-ra",
     "--strict-markers",
