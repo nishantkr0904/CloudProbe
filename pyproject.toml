@@ -150,6 +150,10 @@ extend-exclude = '''
 # Mypy — strict typing on the production package, lenient on tests
 # ---------------------------------------------------------------------------
 [tool.mypy]
+# The package lives under src/, so src/ is the canonical module root.  Without
+# this, an editable install makes mypy resolve every module twice (as
+# "cloudprobe.x" and "src.cloudprobe.x") and abort before checking anything.
+mypy_path      = "src"
 python_version = "3.11"
 files          = ["src", "tests"]
 strict         = true

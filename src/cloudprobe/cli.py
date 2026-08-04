@@ -35,8 +35,8 @@ from collections.abc import Sequence
 
 from cloudprobe import __version__
 from cloudprobe.config import CloudProbeConfig, ConfigError, ProbeType, Target, load
-from cloudprobe.probes import IcmpProbe, ProbeResult, TcpProbe, UdpProbe
-from cloudprobe.scheduler import CronScheduler, run_once
+from cloudprobe.probes import IcmpProbe, Probe, ProbeResult, TcpProbe, UdpProbe
+from cloudprobe.scheduler import CronScheduler, JobAction, run_once
 
 _LOG = logging.getLogger("cloudprobe")
 
@@ -46,7 +46,7 @@ def _targets_for(config: CloudProbeConfig, probe_type: ProbeType) -> list[Target
     return [target for target in config.targets if probe_type in target.probe_types]
 
 
-def _build_action(config: CloudProbeConfig):
+def _build_action(config: CloudProbeConfig) -> JobAction:
     """A ``JobAction`` that runs one probe type against its static targets.
 
     The transports carry the configured default timeout; a probe type with no
@@ -55,7 +55,7 @@ def _build_action(config: CloudProbeConfig):
     failed target a *result*, not a failed run, so a cycle completes regardless.
     """
     timeout = float(config.probe.default_timeout_seconds)
-    probes = {
+    probes: dict[ProbeType, Probe] = {
         ProbeType.TCP: TcpProbe(timeout),
         ProbeType.ICMP: IcmpProbe(timeout),
         ProbeType.UDP: UdpProbe(timeout),

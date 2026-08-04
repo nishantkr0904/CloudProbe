@@ -9,13 +9,14 @@ The layer reports facts and never judges them: it holds no threshold logic, no
 metric emission and no report formatting.
 """
 
-from cloudprobe.probes.base import ProbeErrorClass, ProbeResult
+from cloudprobe.probes.base import Probe, ProbeErrorClass, ProbeResult
 from cloudprobe.probes.icmp import IcmpProbe
 from cloudprobe.probes.tcp import TcpProbe
 from cloudprobe.probes.udp import UdpProbe
 
 __all__ = [
     "IcmpProbe",
+    "Probe",
     "ProbeErrorClass",
     "ProbeResult",
     "TcpProbe",

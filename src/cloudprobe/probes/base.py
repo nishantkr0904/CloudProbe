@@ -18,6 +18,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import Protocol
 
 from cloudprobe.config.models import ProbeType, Target
 
@@ -60,3 +61,15 @@ class ProbeResult:
     timestamp: datetime
     error_class: ProbeErrorClass | None = None
     raw: str | None = None
+
+
+class Probe(Protocol):
+    """The one operation every probe implements: run once against a target.
+
+    Structural, not inherited — a probe satisfies this by shape alone, so the
+    concrete probes stay free of a base class and remain independently
+    testable.  Callers that hold a heterogeneous collection of probes depend on
+    this contract rather than on any concrete type.
+    """
+
+    def run(self, target: Target) -> ProbeResult: ...
