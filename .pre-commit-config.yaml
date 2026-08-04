@@ -5,7 +5,7 @@
 # seconds belongs in CI, not here (see docs/project-structure.md §5).
 
 default_language_version:
-  python: python3.11
+  python: python3
 
 default_stages: [pre-commit]
 
