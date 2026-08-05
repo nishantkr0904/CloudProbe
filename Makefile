@@ -70,7 +70,7 @@ format: bootstrap ## Auto-format source with Black and fix Ruff-fixable issues
 lint: bootstrap ## Run Ruff (lint only), Black --check, and yamllint
 	@$(RUFF) check $(SRC_DIR) $(TESTS_DIR)
 	@$(BLACK) --check $(SRC_DIR) $(TESTS_DIR)
-	@$(VENV_BIN)/yamllint -s configs docs .pre-commit-config.yaml || true
+	@$(VENV_BIN)/yamllint -s configs docs
 
 .PHONY: typecheck
 typecheck: bootstrap ## Run mypy in strict mode
