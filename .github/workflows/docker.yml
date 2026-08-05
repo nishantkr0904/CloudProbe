@@ -1,0 +1,40 @@
+---
+# CloudProbe — Docker image build gate (ROADMAP Phase 8, architecture.md §11.3)
+#
+# Contract: build the production image and run the smoke test `docker run
+# --rm cloudprobe --version`. Triggers only when Docker-, source-, or
+# dependency-file changes land, per ROADMAP.md:294, architecture.md:690,
+# and project-structure.md:563.
+
+name: Docker
+
+"on":
+  pull_request:
+    paths:
+      - "docker/**"
+      - "src/**"
+      - "requirements.txt"
+      - "requirements-dev.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build + smoke test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t cloudprobe:test -f docker/Dockerfile .
+
+      # The documented smoke-test contract: entrypoint.sh forwards `--version`
+      # to `python -m cloudprobe`, which prints `cloudprobe 0.0.1` and exits 0.
+      - name: Smoke test
+        run: docker run --rm cloudprobe:test --version

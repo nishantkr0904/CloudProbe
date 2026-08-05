@@ -1,0 +1,78 @@
+---
+# CloudProbe — primary PR gate (ROADMAP Phase 8, architecture.md §11.3)
+#
+# Contract: lint → typecheck → unit → integration → coverage upload, on a
+# matrix of the two supported interpreters. Every step shells out to a
+# Makefile target so local and CI runs are the same command — README.md
+# "there is no CI-only tooling".
+
+name: CI
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: lint / typecheck / test (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # pyproject.toml requires-python = ">=3.11,<3.13"
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      # Creates .venv and installs requirements-dev.txt. Every other target
+      # depends on this one, so a failure here fails fast and unambiguously.
+      - name: Bootstrap environment
+        run: make bootstrap
+
+      - name: Lint
+        run: make lint
+
+      - name: Typecheck
+        run: make typecheck
+
+      # Run the fast tiers explicitly before coverage so a failure names the
+      # tier that broke rather than surfacing as a generic suite failure.
+      - name: Unit tests
+        run: make test-unit
+
+      - name: Integration tests
+        run: make test-integration
+
+      # Runs the whole suite and enforces the 90% floor from
+      # [tool.coverage.report] fail_under.
+      - name: Coverage
+        run: make coverage
+
+      - name: Upload coverage report
+        # Publish the report even when the coverage gate fails — that is
+        # precisely when the numbers need inspecting.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-py${{ matrix.python-version }}
+          path: |
+            coverage.xml
+            coverage_html/
+          if-no-files-found: error
