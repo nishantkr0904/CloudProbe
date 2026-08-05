@@ -687,7 +687,7 @@ The container runs as non-root UID/GID 10001. Config is bind-mounted read-only; 
 Push / PR
    │
    ├─▶ ci.yml       ── lint → typecheck → unit → integration → coverage upload
-   ├─▶ docker.yml   ── build image → smoke test → vuln scan   (touches docker/, src/, or requirements*.txt)
+   ├─▶ docker.yml   ── build image → smoke test               (touches docker/, src/, or requirements*.txt)
    └─▶ nightly.yml  ── regression + failure scenarios (scheduled)
 ```
 

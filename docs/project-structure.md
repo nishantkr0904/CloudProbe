@@ -560,7 +560,7 @@ Documentation is a first-class deliverable. Each file has a clear reader in mind
 | Workflow | Trigger | Purpose |
 |---|---|---|
 | `ci.yml` | Every PR, every push to `main` | Fast feedback: ruff → mypy → unit → integration → coverage upload. Matrix on Python 3.11/3.12. Target runtime under three minutes. |
-| `docker.yml` | PRs touching `docker/`, `src/`, or `requirements*.txt` | Builds the image, runs a smoke test (`docker run --rm cloudprobe --version`), scans for HIGH/CRITICAL vulnerabilities. |
+| `docker.yml` | PRs touching `docker/`, `src/`, or `requirements*.txt` | Builds the image and runs a smoke test (`docker run --rm cloudprobe --version`). |
 | `nightly.yml` | Scheduled | Full regression + failure-scenario suite. Opens a GitHub Issue if it fails, so overnight breakage is visible the next morning. |
 
 Design intent: **PR feedback stays fast; the expensive work runs nightly.** Contributors are never blocked on tests that take 20 minutes.
