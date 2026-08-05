@@ -1,0 +1,16 @@
+---
+# CloudProbe — yamllint configuration
+#
+# Exists solely to align yamllint with the project's 100-column standard,
+# already declared for Ruff and Black in pyproject.toml. yamllint's built-in
+# default is 80, which would otherwise reject YAML that satisfies every other
+# linter in the toolchain.
+#
+# Auto-discovered from the repository root by both invocation paths:
+# the pre-commit hook and `make lint`.
+
+extends: default
+
+rules:
+  line-length:
+    max: 100
